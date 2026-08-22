@@ -11,6 +11,8 @@ export interface Receta {
   ingredientes: string[];
   pasos: string[];
   tip: string;
+  video?: string;
+  propia?: boolean;
 }
 
 export const IMAGENES = {
@@ -562,3 +564,14 @@ export const PLATOS_MARQUESINA = [
   "Arroz con pollo",
   "Juane",
 ];
+
+/** Video tutorial de YouTube asignado a cada receta del recetario. */
+export const VIDEO_POR_RECETA: Record<string, string> = {
+  ceviche: "_ivdbk8kzMg",
+  lomo: "Oiy05vYSr3s",
+  "aji-gallina": "WpfUdBSMhYo",
+  causa: "GG-o8MPBmoY",
+  anticuchos: "uBJmVVbRGxY",
+  picarones: "gjJHYMfG210",
+  chicha: "8tRAKTwS0_s",
+};

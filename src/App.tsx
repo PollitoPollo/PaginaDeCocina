@@ -1,49 +1,128 @@
-import { useCallback, useEffect, useState } from "react";
-import Nav, { type Escala } from "./components/Nav";
+import { useEffect, useState } from "react";
+import { ControlAuth, ModalAuth, type ModoAuth } from "./components/Auth";
+import Blog from "./components/Blog";
 import Hero from "./components/Hero";
+import LinksFooter from "./components/LinksFooter";
+import Nav from "./components/Nav";
+import RecipeForm from "./components/RecipeForm";
 import Recipes from "./components/Recipes";
 import Videos from "./components/Videos";
-import Blog from "./components/Blog";
-import LinksFooter from "./components/LinksFooter";
 import { Toast } from "./components/ui";
-
-const TAMANOS: Record<Escala, string> = {
-  S: "90%",
-  M: "100%",
-  G: "118%",
-};
+import {
+  aprendidasDeUsuario,
+  alternarAprendida as alternarEnDisco,
+  cerrarSesion,
+  nivelPara,
+  todasLasRecetas,
+  usuarioDeSesion,
+  type Usuario,
+} from "./lib/store";
 
 export default function App() {
-  const [escala, setEscala] = useState<Escala>("M");
-  const [toast, setToast] = useState<string | null>(null);
+  const [sesion, setSesion] = useState<Usuario | null>(() => usuarioDeSesion());
+  const [aprendidas, setAprendidas] = useState<string[]>(() => {
+    const u = usuarioDeSesion();
+    return u ? aprendidasDeUsuario(u.id) : [];
+  });
+  const [recetas, setRecetas] = useState(() => todasLasRecetas());
+  const [modalAuth, setModalAuth] = useState<ModoAuth | null>(null);
+  const [formReceta, setFormReceta] = useState(false);
+  const [mensajeToast, setMensajeToast] = useState<string | null>(null);
 
   useEffect(() => {
-    document.documentElement.style.fontSize = TAMANOS[escala];
-  }, [escala]);
+    if (!mensajeToast) return;
+    const t = setTimeout(() => setMensajeToast(null), 4200);
+    return () => clearTimeout(t);
+  }, [mensajeToast]);
 
-  const avisar = useCallback((mensaje: string) => {
-    setToast(mensaje);
-    window.setTimeout(() => setToast(null), 4200);
-  }, []);
+  const avisar = (mensaje: string) => setMensajeToast(mensaje);
+
+  const manejarExito = (usuario: Usuario) => {
+    setSesion(usuario);
+    setAprendidas(aprendidasDeUsuario(usuario.id));
+    setModalAuth(null);
+  };
+
+  const manejarCierre = () => {
+    cerrarSesion();
+    setSesion(null);
+    setAprendidas([]);
+    avisar("Sesión cerrada. ¡Vuelve pronto a cocinar!");
+  };
+
+  const alternarAprendida = (recetaId: string) => {
+    if (!sesion) {
+      avisar("Inicia sesión o crea una cuenta para marcar tus recetas aprendidas.");
+      setModalAuth("login");
+      return;
+    }
+    const nivelAntes = nivelPara(aprendidas.length).indice;
+    const quedoAprendida = alternarEnDisco(sesion.id, recetaId);
+    const lista = aprendidasDeUsuario(sesion.id);
+    setAprendidas(lista);
+    if (quedoAprendida) {
+      const nivel = nivelPara(lista.length);
+      avisar(
+        nivel.indice > nivelAntes
+          ? `¡Receta aprendida! Subiste a nivel ${nivel.indice + 1}: ${nivel.actual.nombre}.`
+          : "¡Bien hecho! Receta marcada como aprendida."
+      );
+    } else {
+      avisar("Receta quitada de tus aprendidas.");
+    }
+  };
 
   return (
-    <div className="min-h-screen">
-      <a
-        href="#recetas"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-aji focus:px-5 focus:py-3 focus:font-bold focus:text-tinta"
-      >
-        Saltar a las recetas
-      </a>
-      <Nav escala={escala} onEscala={setEscala} />
+    <div>
+      <div className="noise-layer" aria-hidden="true" />
+
+      <Nav
+        auth={
+          <ControlAuth
+            sesion={sesion}
+            aprendidas={aprendidas}
+            recetas={recetas}
+            onAbrirAuth={(modo) => setModalAuth(modo)}
+            onCerrarSesion={manejarCierre}
+            onAgregarReceta={() => setFormReceta(true)}
+          />
+        }
+      />
+
       <main>
         <Hero />
-        <Recipes />
+        <Recipes
+          recetas={recetas}
+          aprendidas={aprendidas}
+          logueado={!!sesion}
+          esAdmin={!!sesion?.esAdmin}
+          onAlternarAprendida={alternarAprendida}
+          onAgregarReceta={() => setFormReceta(true)}
+        />
         <Videos />
         <Blog />
-        <LinksFooter onToast={avisar} />
       </main>
-      <div className="noise-layer" aria-hidden="true" />
-      <Toast mensaje={toast} />
+
+      <LinksFooter onToast={avisar} />
+
+      {modalAuth && (
+        <ModalAuth
+          modoInicial={modalAuth}
+          onCerrar={() => setModalAuth(null)}
+          onExito={manejarExito}
+          onToast={avisar}
+        />
+      )}
+
+      {formReceta && (
+        <RecipeForm
+          onCerrar={() => setFormReceta(false)}
+          onAgregada={() => setRecetas(todasLasRecetas())}
+          onToast={avisar}
+        />
+      )}
+
+      <Toast mensaje={mensajeToast} />
     </div>
   );
 }
