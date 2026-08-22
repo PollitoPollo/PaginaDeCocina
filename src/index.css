@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta: chicha morada (morados profundos), rojo bandera y ají amarillo */
+  --color-tinta: #2b0f2e;
+  --color-uva: #46204b;
+  --color-uva-2: #5d2b61;
+  --color-uva-3: #7a3f77;
+  --color-lila: #cfa9c6;
+  --color-rojo: #d7263d;
+  --color-rojo-2: #a81c30;
+  --color-aji: #f5a31a;
+  --color-aji-2: #ffc65c;
+  --color-papel: #faf1e0;
+  --color-papel-2: #f0e2c8;
+  --color-crema: #fffaef;
+
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Atkinson Hyperlegible", "Trebuchet MS", "Verdana", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-papel text-tinta font-body antialiased;
+  font-size: 1.0625rem;
+}
+
+::selection {
+  background: var(--color-aji);
+  color: var(--color-tinta);
+}
+
+/* ---------- Capas de ambiente ---------- */
+.noise-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-stroke-papel {
+  -webkit-text-stroke: 2px rgba(250, 241, 224, 0.22);
+  color: transparent;
+}
+
+.text-stroke-uva {
+  -webkit-text-stroke: 2px rgba(70, 32, 75, 0.25);
+  color: transparent;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(1.5%, -1.5%);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  50% {
+    transform: translateY(-14px) rotate(var(--rot, 0deg));
+  }
+}
+@keyframes spinSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 24px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+.kenburns {
+  animation: kenburns 16s ease-in-out infinite alternate;
+}
+.floaty {
+  animation: floaty 7s ease-in-out infinite;
+}
+.spin-slow {
+  animation: spinSlow 26s linear infinite;
+}
+.modal-in {
+  animation: modalIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.toast-in {
+  animation: toastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- Aparición al hacer scroll ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Detalle tipográfico ---------- */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 3.3em;
+  float: left;
+  line-height: 0.82;
+  padding: 0.06em 0.14em 0 0;
+  color: var(--color-rojo);
+}
+
+/* ---------- Subrayado de navegación activa ---------- */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-aji);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Accesibilidad y movimiento ---------- */
+:focus-visible {
+  outline: 3px solid var(--color-aji);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+}
