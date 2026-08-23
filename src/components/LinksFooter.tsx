@@ -1,10 +1,13 @@
 import { useState, type FormEvent } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ENLACES } from "../data";
 import { IconExterno, IconFlecha, IconOlla, Reveal } from "./ui";
 
 export default function LinksFooter({ onToast }: { onToast: (msg: string) => void }) {
   const [correo, setCorreo] = useState("");
   const [error, setError] = useState("");
+  const navegar = useNavigate();
+  const location = useLocation();
 
   const suscribir = (e: FormEvent) => {
     e.preventDefault();
@@ -15,6 +18,17 @@ export default function LinksFooter({ onToast }: { onToast: (msg: string) => voi
     setError("");
     setCorreo("");
     onToast("¡Listo! El recetario va en camino a tu correo.");
+  };
+
+  const irASeccion = (id: string) => {
+    const saltar = () =>
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (location.pathname !== "/") {
+      navegar("/");
+      setTimeout(saltar, 120);
+    } else {
+      saltar();
+    }
   };
 
   return (
@@ -127,38 +141,76 @@ export default function LinksFooter({ onToast }: { onToast: (msg: string) => voi
 
       <footer className="bg-tinta pb-10 pt-16 text-papel">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+          <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
             <div>
               <p className="flex items-center gap-3">
                 <span className="grid h-11 w-11 place-items-center rounded-lg bg-aji text-tinta">
                   <IconOlla className="h-6 w-6" />
                 </span>
-                <span className="font-display text-2xl font-black">Sabor Perú</span>
+                <span className="font-display text-2xl font-black">
+                  Cocina <span className="text-aji">Pulguita</span>
+                </span>
               </p>
               <p className="mt-5 max-w-sm leading-relaxed text-lila">
-                Recetas, videos e historias de la cocina peruana, contadas
-                claro para todas las generaciones: del primer ceviche al
-                picarón de la abuela.
+                Recetas, videos, escuela de cocina básica y sabores del mundo,
+                contados claro para todas las generaciones: del primer ceviche
+                al picarón de la abuela.
               </p>
             </div>
             <nav aria-label="Secciones del pie de página">
               <h3 className="font-display text-lg font-black text-aji">Secciones</h3>
               <ul className="mt-4 space-y-2.5">
                 {[
-                  ["#recetas", "Recetas paso a paso"],
-                  ["#videos", "Videos de cocina"],
-                  ["#blog", "Blog del sabor"],
-                  ["#enlaces", "Enlaces recomendados"],
-                ].map(([href, nombre]) => (
-                  <li key={href}>
-                    <a
-                      href={href}
+                  ["recetas", "Recetas paso a paso"],
+                  ["videos", "Videos de cocina"],
+                  ["blog", "Blog del sabor"],
+                  ["enlaces", "Enlaces recomendados"],
+                ].map(([id, nombre]) => (
+                  <li key={id}>
+                    <button
+                      type="button"
+                      onClick={() => irASeccion(id)}
                       className="font-bold text-lila transition-colors hover:text-aji"
                     >
                       {nombre}
-                    </a>
+                    </button>
                   </li>
                 ))}
+              </ul>
+            </nav>
+            <nav aria-label="Páginas del sitio">
+              <h3 className="font-display text-lg font-black text-aji">Páginas</h3>
+              <ul className="mt-4 space-y-2.5">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navegar("/");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="font-bold text-lila transition-colors hover:text-aji"
+                  >
+                    Portada
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => navegar("/cocina-basica")}
+                    className="font-bold text-lila transition-colors hover:text-aji"
+                  >
+                    Cocina Básica
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => navegar("/internacional")}
+                    className="font-bold text-lila transition-colors hover:text-aji"
+                  >
+                    Internacional
+                  </button>
+                </li>
               </ul>
             </nav>
             <div>
@@ -171,7 +223,7 @@ export default function LinksFooter({ onToast }: { onToast: (msg: string) => voi
             </div>
           </div>
           <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-uva-2 pt-6 text-sm font-bold text-lila sm:flex-row sm:items-center">
-            <p>© 2026 Sabor Perú — Hecho con ají amarillo, chicha morada y cariño.</p>
+            <p>© 2026 Cocina Pulguita — Hecho con ají amarillo, chicha morada y cariño.</p>
             <p>Los videos pertenecen a sus creadores en YouTube.</p>
           </div>
         </div>

@@ -575,3 +575,432 @@ export const VIDEO_POR_RECETA: Record<string, string> = {
   picarones: "gjJHYMfG210",
   chicha: "8tRAKTwS0_s",
 };
+
+/* ---------------- Página Internacional ---------------- */
+
+export interface RecetaMundo {
+  id: string;
+  nombre: string;
+  origen: string;
+  tiempo: string;
+  dificultad: "Fácil" | "Media" | "Exigente";
+  porciones: number;
+  descripcion: string;
+  ingredientes: string[];
+  pasos: string[];
+  video: string;
+  tip: string;
+}
+
+export interface PaisSeccion {
+  id: string;
+  nombre: string;
+  lema: string;
+  colores: { acc1: string; acc2: string; tinta: string; fondo: string; suave: string };
+  bandera: { bandas: string[]; orient: "v" | "h" };
+  imagen: string;
+  recetas: RecetaMundo[];
+}
+
+export const PAISES: PaisSeccion[] = [
+  {
+    id: "mexico",
+    nombre: "México",
+    lema: "Maíz, chile y paciencia: la cocina mestiza que conquistó al mundo.",
+    colores: { acc1: "#0e6b3a", acc2: "#c8102e", tinta: "#123524", fondo: "#f2f3e2", suave: "#e4e8cd" },
+    bandera: { bandas: ["#006847", "#f4f4f4", "#ce1126"], orient: "v" },
+    imagen:
+      "https://image.qwenlm.ai/generated-images/f545d9bb-6f39-46ef-a49c-1918bcd798e3/_result.png",
+    recetas: [
+      {
+        id: "mx-pastor",
+        nombre: "Tacos al Pastor",
+        origen: "Ciudad de México",
+        tiempo: "1 h + marinado",
+        dificultad: "Media",
+        porciones: 4,
+        descripcion:
+          "Cerdo marinado en adobo de achiote y chiles guajillo, dorado al calor fuerte con piña. La taquería más famosa del mundo, en tu cocina.",
+        ingredientes: [
+          "1 kg de lomo de cerdo en láminas finas",
+          "4 chiles guajillo y 2 chiles anchos",
+          "50 g de pasta de achiote",
+          "3 dientes de ajo",
+          "½ cebolla blanca",
+          "¼ de taza de vinagre blanco",
+          "1 piña en rodajas",
+          "Tortillas de maíz, cilantro, cebolla y limones para servir",
+        ],
+        pasos: [
+          "Tuesta los chiles en un comal seco y remójalos en agua caliente por 15 minutos.",
+          "Licúalos con el achiote, el ajo, la cebolla, el vinagre y una pizca de sal hasta lograr un adobo espeso.",
+          "Marina la carne al menos 2 horas; si es toda la noche, mejor todavía.",
+          "Dórala en sartén muy caliente hasta que los bordes se caramelicen.",
+          "Asa la piña en el mismo sartén hasta dorarla y córtala en trocitos.",
+          "Sirve en tortillas calientes con piña, cilantro, cebolla y limón.",
+        ],
+        video: "GS7g2l6t_Ug",
+        tip: "El sabor “de trompo” se logra con calor muy alto y láminas delgadas. La piña no es adorno: es parte del adobo.",
+      },
+      {
+        id: "mx-mole",
+        nombre: "Mole Poblano",
+        origen: "Puebla",
+        tiempo: "2 h",
+        dificultad: "Exigente",
+        porciones: 8,
+        descripcion:
+          "Más de una docena de chiles, chocolate, especias y semillas en una salsa profunda y festiva. El platillo de las grandes celebraciones mexicanas.",
+        ingredientes: [
+          "3 chiles mulatos, 3 anchos y 3 pasilla",
+          "50 g de chocolate de mesa",
+          "1 jitomate y ½ cebolla",
+          "3 dientes de ajo",
+          "30 g de ajonjolí y 20 g de almendras",
+          "1 plátano macho y 1 tortilla",
+          "1 raja de canela",
+          "1 pollo cocido en piezas y caldo de pollo",
+        ],
+        pasos: [
+          "Fríe ligeramente los chiles, límpialos de semillas y remójalos en agua caliente.",
+          "Asa el jitomate, la cebolla y el ajo, y licúalos con los chiles escurridos.",
+          "Fríe el ajonjolí, las almendras, el plátano y la tortilla; licúalos con un poco de caldo.",
+          "Une todo en una olla con la canela y cocina 30 minutos a fuego bajo, moviendo siempre.",
+          "Añade el chocolate, sal al gusto y caldo hasta lograr la textura de una crema.",
+          "Baña el pollo cocido y sirve con ajonjolí tostado por encima.",
+        ],
+        video: "K_D54YtCSrw",
+        tip: "El mole mejora al día siguiente. Cocina a fuego bajo y sin dejar de mover: el chocolate no perdona el fondo de la olla.",
+      },
+      {
+        id: "mx-nogada",
+        nombre: "Chiles en Nogada",
+        origen: "Puebla",
+        tiempo: "1 h 30 min",
+        dificultad: "Exigente",
+        porciones: 6,
+        descripcion:
+          "Chiles poblanos rellenos de picadillo con frutas, bañados en crema de nuez, granada y perejil: el verde, blanco y rojo de la bandera en un plato.",
+        ingredientes: [
+          "6 chiles poblanos asados, sudados y pelados",
+          "300 g de carne de cerdo molida",
+          "1 pera, 1 manzana y 1 plátano macho en cubitos",
+          "½ cebolla y 2 dientes de ajo picados",
+          "1 jitomate picado",
+          "200 g de nuez de castilla pelada",
+          "100 g de queso fresco y ½ taza de leche",
+          "1 granada y perejil fresco; canela y sal",
+        ],
+        pasos: [
+          "Sofríe cebolla y ajo, agrega la carne, el jitomate y la canela, y cocina bien.",
+          "Incorpora las frutas, cocina 5 minutos más y deja enfriar el picadillo.",
+          "Rellena los chiles con cuidado de no romperlos.",
+          "Licúa la nuez con el queso y la leche hasta obtener una crema tersa.",
+          "Cubre los chiles con la nogada y decora con granada y perejil.",
+          "Sirve a temperatura ambiente, como se ha hecho por dos siglos.",
+        ],
+        video: "oP6hcmAID3s",
+        tip: "Su temporada va de julio a septiembre, cuando llegan la nuez criolla y la granada. Vale la pena esperarlos.",
+      },
+    ],
+  },
+  {
+    id: "italia",
+    nombre: "Italia",
+    lema: "Pocos ingredientes, técnica impecable: la escuela de la sencillez perfecta.",
+    colores: { acc1: "#1c7c44", acc2: "#b21f2d", tinta: "#1c3a2a", fondo: "#f1f3e8", suave: "#e2e8d2" },
+    bandera: { bandas: ["#009246", "#f4f4f4", "#ce2b37"], orient: "v" },
+    imagen:
+      "https://image.qwenlm.ai/generated-images/6fd85ecd-8d47-4b63-afb2-a66494be91bf/_result.png",
+    recetas: [
+      {
+        id: "it-carbonara",
+        nombre: "Spaghetti alla Carbonara",
+        origen: "Roma",
+        tiempo: "25 min",
+        dificultad: "Fácil",
+        porciones: 4,
+        descripcion:
+          "La carbonara romana de verdad: guanciale, yemas, pecorino y pimienta. Sin nata ni crema. Cremosa, simple y lista en lo que hierve la pasta.",
+        ingredientes: [
+          "400 g de spaghetti",
+          "150 g de guanciale en tiras",
+          "4 yemas de huevo y 1 huevo entero",
+          "80 g de queso pecorino romano rallado",
+          "Pimienta negra recién molida, en abundancia",
+          "Sal para el agua de la pasta",
+        ],
+        pasos: [
+          "Cuece la pasta en agua abundante con sal.",
+          "Derrite el guanciale a fuego medio hasta que esté crujiente y dorado.",
+          "Bate las yemas con el pecorino y mucha pimienta en un bol amplio.",
+          "Pasa la pasta al sartén con el guanciale, ya fuera del fuego.",
+          "Añade la mezcla de huevo y un cucharón de agua de la pasta, removiendo sin parar.",
+          "Sirve al momento con más pecorino y pimienta.",
+        ],
+        video: "Nlm6G6_8GqI",
+        tip: "La cremosidad nace de la emulsión de huevo, queso y agua de cocción, siempre fuera del fuego. Si vuelves a encender la llama, harás huevo revuelto.",
+      },
+      {
+        id: "it-risotto",
+        nombre: "Risotto alla Milanese",
+        origen: "Milán",
+        tiempo: "40 min",
+        dificultad: "Media",
+        porciones: 4,
+        descripcion:
+          "Arroz carnaroli dorado por el azafrán y acabado con mantequilla y parmesano. La técnica que define al risotto italiano: caldo, paciencia y mantecatura.",
+        ingredientes: [
+          "320 g de arroz carnaroli o arborio",
+          "1,2 litros de caldo caliente",
+          "Unas hebras de azafrán",
+          "1 cebolla pequeña picada fina",
+          "60 g de mantequilla fría",
+          "60 g de parmigiano reggiano rallado",
+          "½ taza de vino blanco seco",
+          "Sal",
+        ],
+        pasos: [
+          "Infusiona el azafrán en un cucharón de caldo caliente.",
+          "Sofríe la cebolla con la mitad de la mantequilla, añade el arroz y tuesta 2 minutos.",
+          "Vierte el vino y deja que se evapore por completo.",
+          "Agrega caldo caliente cucharón a cucharón, removiendo, durante 16 a 18 minutos.",
+          "Incorpora el azafrán y, fuera del fuego, manteca con la mantequilla fría y el parmesano.",
+          "Deja reposar 1 minuto y sirve “all'onda”: cremoso, como una ola.",
+        ],
+        video: "uCePQ9bk144",
+        tip: "No laves el arroz: su almidón es el que da la cremosidad. El punto se comprueba al mover la olla: el risotto debe ondear.",
+      },
+      {
+        id: "it-ossobuco",
+        nombre: "Ossobuco alla Milanese",
+        origen: "Lombardía",
+        tiempo: "2 h",
+        dificultad: "Exigente",
+        porciones: 4,
+        descripcion:
+          "Jarrete de ternera braseado lentamente en vino blanco y caldo, perfumado con gremolata. El plato de domingo que acompaña perfecto al risotto.",
+        ingredientes: [
+          "4 jarretes de ternera de unos 3 cm de grosor",
+          "Harina para enharinar",
+          "1 vaso de vino blanco",
+          "400 ml de caldo",
+          "1 cebolla, 1 zanahoria y 1 rama de apio picados",
+          "200 g de tomate triturado",
+          "Ralladura y jugo de 1 limón",
+          "1 diente de ajo y perejil fresco para la gremolata",
+          "Mantequilla y aceite de oliva",
+        ],
+        pasos: [
+          "Ata los jarretes, enharínalos y dóralos en mantequilla con aceite. Resérvalos.",
+          "Sofríe las verduras en la misma olla hasta que estén tiernas.",
+          "Regresa la carne, vierte el vino y deja que reduzca a la mitad.",
+          "Añade el tomate y el caldo, tapa y brasea a fuego mínimo 1 hora y 45 minutos.",
+          "Prepara la gremolata: ralladura de limón, ajo y perejil picados muy finos.",
+          "Sirve el ossobuco con su salsa y una lluvia de gremolata fresca.",
+        ],
+        video: "utPA43t1cTI",
+        tip: "El tuétano del hueso es la mejor parte: se unta en pan. Y con la salsa que sobre, al día siguiente toca risotto.",
+      },
+    ],
+  },
+  {
+    id: "espana",
+    nombre: "España",
+    lema: "Del socarrat de la paella al jugo de la tortilla: la mesa del mediodía eterno.",
+    colores: { acc1: "#b01e28", acc2: "#e9a11c", tinta: "#3d1a12", fondo: "#faf0dc", suave: "#f2e1c2" },
+    bandera: { bandas: ["#aa151b", "#f1bf00", "#aa151b"], orient: "h" },
+    imagen:
+      "https://image.qwenlm.ai/generated-images/5228ddfe-563c-4cc7-bc7e-70950b4cc494/_result.png",
+    recetas: [
+      {
+        id: "es-paella",
+        nombre: "Paella Valenciana",
+        origen: "Valencia",
+        tiempo: "1 h",
+        dificultad: "Exigente",
+        porciones: 6,
+        descripcion:
+          "Arroz bomba en paellera con azafrán, pollo, conejo y judías verdes. El plato más famoso de España, con una regla de oro: jamás se remueve.",
+        ingredientes: [
+          "400 g de arroz bomba",
+          "300 g de pollo y 200 g de conejo en trozos",
+          "150 g de judía verde plana",
+          "100 g de garrofón",
+          "1 tomate maduro rallado",
+          "1,5 litros de caldo caliente",
+          "Unas hebras de azafrán y pimentón dulce",
+          "Aceite de oliva y sal",
+        ],
+        pasos: [
+          "Dora bien la carne salada en aceite de oliva, en la paellera.",
+          "Añade las judías y el garrofón, y sofríe unos minutos.",
+          "Incorpora el tomate y el pimentón, y cocina hasta hacer un sofrito oscuro.",
+          "Suma el arroz, nácrelo un minuto y vierte el caldo caliente con el azafrán.",
+          "Fuego vivo 10 minutos y suave 8 más, sin tocar el arroz.",
+          "Sube el fuego 1 minuto final para el socarrat y reposa 5 minutos tapada con un paño.",
+        ],
+        video: "l6ND4pZXKLU",
+        tip: "El socarrat —la costra caramelizada del fondo— es el alma de la paella. Se anuncia con un crepitar suave: ese es el momento.",
+      },
+      {
+        id: "es-tortilla",
+        nombre: "Tortilla Española",
+        origen: "Toda España",
+        tiempo: "40 min",
+        dificultad: "Media",
+        porciones: 4,
+        descripcion:
+          "Huevo, papa, aceite de oliva y la eterna discusión: ¿con cebolla o sin cebolla? La reina de las tapas, jugosa en el centro y firme por fuera.",
+        ingredientes: [
+          "6 huevos",
+          "700 g de papas en láminas finas",
+          "1 cebolla grande (si eres del equipo con cebolla)",
+          "300 ml de aceite de oliva suave para confitar",
+          "Sal",
+        ],
+        pasos: [
+          "Confita las papas (y la cebolla) a fuego bajo, sin que doren, 20 a 25 minutos.",
+          "Escúrrelas muy bien y mézclalas con los huevos batidos y salados.",
+          "Deja reposar la mezcla 5 minutos para que la papa absorba el huevo.",
+          "Cuaja en sartén a fuego medio-bajo unos 3 minutos, moviendo los bordes.",
+          "Dale la vuelta con un plato y cuaja 2 minutos más: el centro debe quedar jugoso.",
+          "Reposa 5 minutos antes de cortar en cuñas.",
+        ],
+        video: "Na6_hxPsPIM",
+        tip: "No batas demasiado los huevos y deja reposar la papa en ellos: la jugosidad se decide en esos cinco minutos de paciencia.",
+      },
+      {
+        id: "es-gazpacho",
+        nombre: "Gazpacho Andaluz",
+        origen: "Andalucía",
+        tiempo: "15 min + frío",
+        dificultad: "Fácil",
+        porciones: 4,
+        descripcion:
+          "Tomate maduro, pimiento, pepino, pan, aceite y vinagre batidos en frío. El verano andaluz servido en vaso, nacido en los campos del sur.",
+        ingredientes: [
+          "1 kg de tomates muy maduros",
+          "1 pimiento verde italiano",
+          "1 pepino pequeño",
+          "1 diente de ajo",
+          "50 g de pan del día anterior",
+          "60 ml de aceite de oliva virgen extra",
+          "15 ml de vinagre de Jerez",
+          "Sal y hielo",
+        ],
+        pasos: [
+          "Lava y trocea las verduras, sin obsesionarte con el tamaño.",
+          "Bate todo junto con el pan, el ajo y la sal durante 2 minutos.",
+          "Con la batidora en marcha, añade el aceite en hilo fino para emulsionar.",
+          "Prueba y ajusta de vinagre y sal.",
+          "Refrigera al menos 2 horas.",
+          "Sirve muy frío, con trocitos de verdura picada por encima.",
+        ],
+        video: "6ml6NE-MW84",
+        tip: "La calidad del tomate y del aceite lo decide todo. Si queda espeso, aligera con agua helada, nunca con más pan.",
+      },
+    ],
+  },
+  {
+    id: "argentina",
+    nombre: "Argentina",
+    lema: "Fuego, sal gruesa y sobremesa larga: la liturgia del asado.",
+    colores: { acc1: "#3e8fc0", acc2: "#f0b429", tinta: "#123a52", fondo: "#eaf2f7", suave: "#d8e7f0" },
+    bandera: { bandas: ["#74acdf", "#f4f4f4", "#74acdf"], orient: "h" },
+    imagen:
+      "https://image.qwenlm.ai/generated-images/e3df267a-b6e2-4b5a-9484-45305c486b80/_result.png",
+    recetas: [
+      {
+        id: "ar-asado",
+        nombre: "Asado con Chimichurri",
+        origen: "La pampa",
+        tiempo: "1 h 30 min",
+        dificultad: "Media",
+        porciones: 6,
+        descripcion:
+          "Tira de asado a la brasa de leña con sal gruesa y paciencia. Más que un plato, el ritual del domingo argentino: fuego lento y conversación.",
+        ingredientes: [
+          "2 kg de tira de asado",
+          "Sal gruesa",
+          "1 atado de perejil fresco",
+          "4 dientes de ajo",
+          "1 cucharada de orégano seco",
+          "1 cucharadita de ají molido",
+          "125 ml de vinagre de vino tinto",
+          "250 ml de aceite de girasol o de oliva",
+        ],
+        pasos: [
+          "Prepara el chimichurri: pica el perejil y el ajo, mezcla con orégano, ají, vinagre y aceite, y deja reposar.",
+          "Enciende leña o carbón y espera brasas blancas, sin llama.",
+          "Sala la tira y colócala del lado del hueso, a fuego medio, 40 a 50 minutos.",
+          "Da la vuelta y cocina 15 minutos más, hasta dorar.",
+          "Deja reposar 5 minutos sobre tabla de madera.",
+          "Corta entre hueso y hueso, y sirve con chimichurri generoso.",
+        ],
+        video: "tgpigZjojkk",
+        tip: "La brasa está lista cuando aguantas la mano sobre la parrilla 4 o 5 segundos. El asado no se apura: se acompaña.",
+      },
+      {
+        id: "ar-empanadas",
+        nombre: "Empanadas Salteñas",
+        origen: "Salta",
+        tiempo: "1 h 30 min",
+        dificultad: "Exigente",
+        porciones: 12,
+        descripcion:
+          "Jugosas, de carne cortada a cuchillo con papa y especias, cerradas con el repulgue que distingue a Salta. El orgullo del norte argentino.",
+        ingredientes: [
+          "12 discos de empanada",
+          "500 g de carne de res cortada a cuchillo",
+          "2 cebollas picadas y 1 pimiento rojo",
+          "2 papas cocidas en cubitos",
+          "1 cucharadita de pimentón dulce",
+          "1 cucharadita de comino y ½ de ají molido",
+          "2 huevos duros y 2 cebollas de verdeo",
+          "Grasa de vaca o aceite, y caldo",
+        ],
+        pasos: [
+          "Sofríe la cebolla y el pimiento; agrega la carne y las especias, y cocina apenas.",
+          "Suma un cucharón de caldo y deja guisar 15 minutos a fuego suave.",
+          "Fuera del fuego, incorpora la papa, el huevo picado y el verdeo.",
+          "Enfría el relleno en la heladera: es imprescindible para el armado.",
+          "Rellena los discos y ciérralos con el repulgue tradicional.",
+          "Hornea a 220 °C unos 15 minutos, hasta dorar.",
+        ],
+        video: "eWPzfMwVN3w",
+        tip: "El relleno debe estar frío y jugoso: ese es el secreto del “jugo” que explota al morder. Cómelas con cuidado y sin culpa.",
+      },
+      {
+        id: "ar-chimichurri",
+        nombre: "Chimichurri Casero",
+        origen: "Todo el país",
+        tiempo: "15 min + reposo",
+        dificultad: "Fácil",
+        porciones: 1,
+        descripcion:
+          "La salsa verde que no falta en ninguna parrilla: perejil, ajo, orégano, ají, vinagre y aceite. Simple, pero con reglas que se respetan.",
+        ingredientes: [
+          "1 atado grande de perejil fresco",
+          "4 dientes de ajo",
+          "1 cucharada de orégano seco",
+          "1 cucharadita de ají molido",
+          "1 cucharadita de pimentón dulce",
+          "60 ml de vinagre de vino tinto",
+          "180 ml de aceite neutro",
+          "Sal gruesa y pimienta negra",
+        ],
+        pasos: [
+          "Pica el perejil y el ajo a cuchillo, bien finos (nada de licuadora).",
+          "Mezcla con el orégano, el pimentón, el ají y la sal.",
+          "Añade el vinagre y deja reposar 10 minutos.",
+          "Suma el aceite y mezcla con calma.",
+          "Deja macerar 24 horas en la heladera y ajusta la sazón.",
+          "Se conserva hasta dos semanas refrigerado.",
+        ],
+        video: "WSYch4pESw0",
+        tip: "Cuchillo y tabla, jamás licuadora: el picado a mano conserva el aroma y evita que el perejil se oxide y amargue.",
+      },
+    ],
+  },
+];
