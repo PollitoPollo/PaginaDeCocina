@@ -423,10 +423,13 @@ export function ModalAuth({
                 ¿Olvidaste tu contraseña? Restablécela aquí
               </button>
               <p className="mt-4 rounded-lg bg-papel-2 px-4 py-3 text-center text-[13px] font-bold leading-relaxed text-uva-2">
-                Cuenta de demostración del administrador:
+                Cuentas de demostración:
                 <br />
-                usuario <span className="text-rojo">admin</span> · contraseña{" "}
+                Administrador: usuario <span className="text-rojo">admin</span> · clave{" "}
                 <span className="text-rojo">admin123</span>
+                <br />
+                Usuario casual: usuario <span className="text-verde-2">casual</span> · clave{" "}
+                <span className="text-verde-2">casual123</span>
               </p>
             </>
           )}

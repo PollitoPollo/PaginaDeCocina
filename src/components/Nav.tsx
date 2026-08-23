@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IconOlla } from "./ui";
 
 const SECCIONES = [
@@ -8,9 +9,16 @@ const SECCIONES = [
   { id: "enlaces", nombre: "Enlaces" },
 ];
 
+const RUTAS = [
+  { path: "/cocina-basica", nombre: "Cocina Básica" },
+  { path: "/internacional", nombre: "Internacional" },
+];
+
 export default function Nav({ auth }: { auth: ReactNode }) {
   const [progreso, setProgreso] = useState(0);
   const [activa, setActiva] = useState("");
+  const navegar = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const alScroll = () => {
@@ -23,6 +31,7 @@ export default function Nav({ auth }: { auth: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (location.pathname !== "/") return;
     const io = new IntersectionObserver(
       (entradas) => {
         entradas.forEach((e) => {
@@ -36,7 +45,19 @@ export default function Nav({ auth }: { auth: ReactNode }) {
       if (el) io.observe(el);
     });
     return () => io.disconnect();
-  }, []);
+  }, [location.pathname]);
+
+  /* Salta a una sección de la portada, estés en la página que estés. */
+  const irASeccion = (id: string) => {
+    const saltar = () =>
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (location.pathname !== "/") {
+      navegar("/");
+      setTimeout(saltar, 120);
+    } else {
+      saltar();
+    }
+  };
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-uva-2 bg-tinta/95 text-papel backdrop-blur-sm">
@@ -47,34 +68,51 @@ export default function Nav({ auth }: { auth: ReactNode }) {
         aria-hidden="true"
       />
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
-        <a href="#inicio" className="group flex items-center gap-3">
+        <Link to="/" className="group flex items-center gap-3">
           <span className="grid h-11 w-11 place-items-center rounded-lg bg-aji text-tinta transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
             <IconOlla className="h-6 w-6" />
           </span>
           <span className="leading-tight">
             <span className="block font-display text-xl font-black tracking-tight">
-              Sabor Perú
+              Cocina <span className="text-aji">Pulguita</span>
             </span>
             <span className="block text-[11px] font-bold uppercase tracking-[0.22em] text-lila">
-              cocina de todos
+              escuela y sabor
             </span>
           </span>
-        </a>
+        </Link>
 
         <nav
           aria-label="Secciones del sitio"
-          className="ml-auto hidden items-center gap-7 lg:flex"
+          className="ml-auto hidden items-center gap-6 xl:gap-7 lg:flex"
         >
           {SECCIONES.map(({ id, nombre }) => (
-            <a
+            <button
               key={id}
-              href={`#${id}`}
+              type="button"
+              onClick={() => irASeccion(id)}
               className={`nav-link font-bold transition-colors ${
-                activa === id ? "active text-aji" : "text-papel hover:text-aji"
+                location.pathname === "/" && activa === id
+                  ? "active text-aji"
+                  : "text-papel hover:text-aji"
               }`}
             >
               {nombre}
-            </a>
+            </button>
+          ))}
+
+          <span className="h-6 w-px bg-uva-2" aria-hidden="true" />
+
+          {RUTAS.map(({ path, nombre }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`nav-link font-bold transition-colors ${
+                location.pathname === path ? "active text-aji" : "text-papel hover:text-aji"
+              }`}
+            >
+              {nombre}
+            </Link>
           ))}
         </nav>
 
@@ -87,15 +125,26 @@ export default function Nav({ auth }: { auth: ReactNode }) {
         className="flex gap-6 overflow-x-auto border-t border-uva-2 px-4 py-2 lg:hidden"
       >
         {SECCIONES.map(({ id, nombre }) => (
-          <a
+          <button
             key={id}
-            href={`#${id}`}
+            type="button"
+            onClick={() => irASeccion(id)}
+            className="whitespace-nowrap text-sm font-bold text-papel"
+          >
+            {nombre}
+          </button>
+        ))}
+        <span className="my-1 w-px shrink-0 bg-uva-2" aria-hidden="true" />
+        {RUTAS.map(({ path, nombre }) => (
+          <Link
+            key={path}
+            to={path}
             className={`whitespace-nowrap text-sm font-bold ${
-              activa === id ? "text-aji" : "text-papel"
+              location.pathname === path ? "text-aji" : "text-papel"
             }`}
           >
             {nombre}
-          </a>
+          </Link>
         ))}
       </nav>
     </header>

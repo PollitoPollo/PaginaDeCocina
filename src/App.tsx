@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ControlAuth, ModalAuth, type ModoAuth } from "./components/Auth";
 import Blog from "./components/Blog";
 import Hero from "./components/Hero";
@@ -8,6 +9,8 @@ import RecipeForm from "./components/RecipeForm";
 import Recipes from "./components/Recipes";
 import Videos from "./components/Videos";
 import { Toast } from "./components/ui";
+import CocinaBasica from "./pages/CocinaBasica";
+import Internacional from "./pages/Internacional";
 import {
   aprendidasDeUsuario,
   alternarAprendida as alternarEnDisco,
@@ -17,6 +20,32 @@ import {
   usuarioDeSesion,
   type Usuario,
 } from "./lib/store";
+
+function ScrollAlInicio() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+function Portada(props: {
+  recetas: ReturnType<typeof todasLasRecetas>;
+  aprendidas: string[];
+  logueado: boolean;
+  esAdmin: boolean;
+  onAlternarAprendida: (recetaId: string) => void;
+  onAgregarReceta: () => void;
+}) {
+  return (
+    <main>
+      <Hero />
+      <Recipes {...props} />
+      <Videos />
+      <Blog />
+    </main>
+  );
+}
 
 export default function App() {
   const [sesion, setSesion] = useState<Usuario | null>(() => usuarioDeSesion());
@@ -73,56 +102,67 @@ export default function App() {
   };
 
   return (
-    <div>
-      <div className="noise-layer" aria-hidden="true" />
+    <HashRouter>
+      <ScrollAlInicio />
+      <div>
+        <div className="noise-layer" aria-hidden="true" />
 
-      <Nav
-        auth={
-          <ControlAuth
-            sesion={sesion}
-            aprendidas={aprendidas}
-            recetas={recetas}
-            onAbrirAuth={(modo) => setModalAuth(modo)}
-            onCerrarSesion={manejarCierre}
-            onAgregarReceta={() => setFormReceta(true)}
+        <Nav
+          auth={
+            <ControlAuth
+              sesion={sesion}
+              aprendidas={aprendidas}
+              recetas={recetas}
+              onAbrirAuth={(modo) => setModalAuth(modo)}
+              onCerrarSesion={manejarCierre}
+              onAgregarReceta={() => setFormReceta(true)}
+            />
+          }
+        />
+
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Portada
+                recetas={recetas}
+                aprendidas={aprendidas}
+                logueado={!!sesion}
+                esAdmin={!!sesion?.esAdmin}
+                onAlternarAprendida={alternarAprendida}
+                onAgregarReceta={() => setFormReceta(true)}
+              />
+            }
           />
-        }
-      />
+          <Route
+            path="/cocina-basica"
+            element={<CocinaBasica esAdmin={!!sesion?.esAdmin} avisar={avisar} />}
+          />
+          <Route path="/internacional" element={<Internacional />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
-      <main>
-        <Hero />
-        <Recipes
-          recetas={recetas}
-          aprendidas={aprendidas}
-          logueado={!!sesion}
-          esAdmin={!!sesion?.esAdmin}
-          onAlternarAprendida={alternarAprendida}
-          onAgregarReceta={() => setFormReceta(true)}
-        />
-        <Videos />
-        <Blog />
-      </main>
+        <LinksFooter onToast={avisar} />
 
-      <LinksFooter onToast={avisar} />
+        {modalAuth && (
+          <ModalAuth
+            modoInicial={modalAuth}
+            onCerrar={() => setModalAuth(null)}
+            onExito={manejarExito}
+            onToast={avisar}
+          />
+        )}
 
-      {modalAuth && (
-        <ModalAuth
-          modoInicial={modalAuth}
-          onCerrar={() => setModalAuth(null)}
-          onExito={manejarExito}
-          onToast={avisar}
-        />
-      )}
+        {formReceta && (
+          <RecipeForm
+            onCerrar={() => setFormReceta(false)}
+            onAgregada={() => setRecetas(todasLasRecetas())}
+            onToast={avisar}
+          />
+        )}
 
-      {formReceta && (
-        <RecipeForm
-          onCerrar={() => setFormReceta(false)}
-          onAgregada={() => setRecetas(todasLasRecetas())}
-          onToast={avisar}
-        />
-      )}
-
-      <Toast mensaje={mensajeToast} />
-    </div>
+        <Toast mensaje={mensajeToast} />
+      </div>
+    </HashRouter>
   );
 }
