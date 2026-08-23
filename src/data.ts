@@ -13,6 +13,7 @@ export interface Receta {
   tip: string;
   video?: string;
   propia?: boolean;
+  pais?: string;
 }
 
 export const IMAGENES = {
@@ -590,6 +591,9 @@ export interface RecetaMundo {
   pasos: string[];
   video: string;
   tip: string;
+  imagen?: string;
+  propia?: boolean;
+  pais?: string;
 }
 
 export interface PaisSeccion {

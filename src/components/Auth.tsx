@@ -26,6 +26,7 @@ export function ControlAuth({
   sesion,
   aprendidas,
   recetas,
+  nivelCompletos,
   onAbrirAuth,
   onCerrarSesion,
   onAgregarReceta,
@@ -33,6 +34,7 @@ export function ControlAuth({
   sesion: Usuario | null;
   aprendidas: string[];
   recetas: Receta[];
+  nivelCompletos: number;
   onAbrirAuth: (modo: ModoAuth) => void;
   onCerrarSesion: () => void;
   onAgregarReceta: () => void;
@@ -79,7 +81,8 @@ export function ControlAuth({
   }
 
   /* --- Con sesión: menú desplegable --- */
-  const nivel = nivelPara(aprendidas.length);
+  const totalAprendido = aprendidas.length + nivelCompletos;
+  const nivel = nivelPara(totalAprendido);
   const recetasAprendidas = aprendidas
     .map((id) => recetas.find((r) => r.id === id))
     .filter((r): r is Receta => Boolean(r));
@@ -144,9 +147,13 @@ export function ControlAuth({
               />
             </div>
             <p className="mt-2 text-sm font-bold leading-snug text-uva-2">
-              {aprendidas.length} de {recetas.length} recetas aprendidas.{" "}
+              {totalAprendido === 1 ? "1 aprendizaje" : `${totalAprendido} aprendizajes`}:{" "}
+              {aprendidas.length} de {recetas.length} recetas
+              {nivelCompletos > 0 &&
+                ` y ${nivelCompletos} ${nivelCompletos === 1 ? "nivel" : "niveles"} de cocina básica`}
+              .{" "}
               {nivel.siguiente
-                ? `Te faltan ${nivel.siguiente.min - aprendidas.length} para ser "${nivel.siguiente.nombre}".`
+                ? `Te faltan ${nivel.siguiente.min - totalAprendido} para ser "${nivel.siguiente.nombre}".`
                 : "¡Llegaste al nivel máximo, maestro!"}
             </p>
           </div>
