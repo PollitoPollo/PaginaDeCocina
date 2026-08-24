@@ -1,4 +1,4 @@
-import { RECETAS, type Receta } from "../data";
+import { RECETAS, type Receta, type RecetaMundo } from "../data";
 
 export interface Usuario {
   id: string;
@@ -216,6 +216,8 @@ export interface NivelBasica {
   resumen: string;
   tiempo: string;
   puntos: string[];
+  imagen?: string;
+  video?: string;
 }
 
 export const MAX_NIVELES = 8;
@@ -238,6 +240,37 @@ export function eliminarNivelBasica(id: string) {
     K_NIVELES,
     getNivelesBasica().filter((n) => n.id !== id)
   );
+}
+
+/* ---------- Cocina Básica: niveles completados por usuario ---------- */
+
+const claveCompletos = (idUsuario: string) => `cp_nivel_completo_${idUsuario}`;
+
+export function completosDeUsuario(idUsuario: string): string[] {
+  return leer<string[]>(claveCompletos(idUsuario), []);
+}
+
+/** Marca o desmarca un nivel como completado. Devuelve true si quedó completado. */
+export function alternarNivelCompletado(idUsuario: string, nivelId: string): boolean {
+  const actual = completosDeUsuario(idUsuario);
+  const estaba = actual.includes(nivelId);
+  escribir(
+    claveCompletos(idUsuario),
+    estaba ? actual.filter((n) => n !== nivelId) : [...actual, nivelId]
+  );
+  return !estaba;
+}
+
+/* ---------- Recetas internacionales agregadas por el administrador ---------- */
+
+const K_INTL = "cp_internacional_extra";
+
+export function recetasInternacionalExtra(): RecetaMundo[] {
+  return leer<RecetaMundo[]>(K_INTL, []);
+}
+
+export function agregarRecetaInternacional(receta: RecetaMundo) {
+  escribir(K_INTL, [...recetasInternacionalExtra(), receta]);
 }
 
 /* ---------- Cocina Básica: cocineros famosos ---------- */

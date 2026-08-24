@@ -7,6 +7,7 @@ import {
   eliminarChef,
   eliminarConsejo,
   eliminarNivelBasica,
+  extraerIdYouTube,
   getChefs,
   getConsejos,
   getNivelesBasica,
@@ -162,7 +163,14 @@ const claseInput =
 const claseLabel = "block text-sm font-bold uppercase tracking-wider text-uva-2";
 
 function FormNivel({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: string) => void }) {
-  const [c, setC] = useState({ titulo: "", resumen: "", tiempo: "", puntos: "" });
+  const [c, setC] = useState({
+    titulo: "",
+    resumen: "",
+    tiempo: "",
+    puntos: "",
+    imagen: "",
+    video: "",
+  });
   const [error, setError] = useState("");
   const set = (campo: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setC({ ...c, [campo]: e.target.value });
@@ -178,6 +186,8 @@ function FormNivel({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg:
       resumen: c.resumen.trim() || "Un nivel nuevo de la escuela de Cocina Pulguita.",
       tiempo: c.tiempo.trim() || "A tu ritmo",
       puntos,
+      imagen: c.imagen.trim() || undefined,
+      video: c.video.trim() ? extraerIdYouTube(c.video) : undefined,
     });
     if (!r.ok) return setError(r.error ?? "No se pudo publicar el nivel.");
     onListo(`Nivel publicado: "${c.titulo.trim()}".`);
@@ -206,6 +216,17 @@ function FormNivel({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg:
           <div>
             <label htmlFor="nv-resumen" className={claseLabel}>Resumen</label>
             <textarea id="nv-resumen" rows={2} value={c.resumen} onChange={set("resumen")} placeholder="¿Qué aprenderá la gente en este nivel?" className={claseInput} />
+          </div>
+          <div>
+            <label htmlFor="nv-imagen" className={claseLabel}>Imagen de identificación (enlace, opcional)</label>
+            <input id="nv-imagen" value={c.imagen} onChange={set("imagen")} placeholder="https://… la foto que representará el nivel" className={claseInput} />
+          </div>
+          <div>
+            <label htmlFor="nv-video" className={claseLabel}>Video tutorial de YouTube (opcional)</label>
+            <input id="nv-video" value={c.video} onChange={set("video")} placeholder="https://www.youtube.com/watch?v=…" className={claseInput} />
+            <p className="mt-1.5 text-[13px] font-bold text-uva-2">
+              La imagen y el video ayudan a identificar el nivel de un vistazo.
+            </p>
           </div>
           <div>
             <label htmlFor="nv-puntos" className={claseLabel}>Pasos y consejos * (uno por línea)</label>
@@ -342,9 +363,15 @@ function FormConsejo({ onCerrar, onListo }: { onCerrar: () => void; onListo: (ms
 
 export default function CocinaBasica({
   esAdmin,
+  logueado,
+  completos,
+  onCompletar,
   avisar,
 }: {
   esAdmin: boolean;
+  logueado: boolean;
+  completos: string[];
+  onCompletar: (nivelId: string) => void;
   avisar: (mensaje: string) => void;
 }) {
   const [pestana, setPestana] = useState<Pestana>("niveles");
@@ -490,9 +517,29 @@ export default function CocinaBasica({
                   );
                 }
                 const abierto = nivelAbierto === nivel.id;
+                const completo = completos.includes(nivel.id);
                 return (
                   <Reveal key={nivel.id} delay={(i % 2) * 100}>
-                    <article className="overflow-hidden rounded-xl border-2 border-tinta/10 bg-crema shadow-md transition-shadow duration-300 hover:shadow-xl">
+                    <article
+                      className={`overflow-hidden rounded-xl border-2 bg-crema shadow-md transition-shadow duration-300 hover:shadow-xl ${
+                        completo ? "border-verde/60" : "border-tinta/10"
+                      }`}
+                    >
+                      {nivel.imagen && (
+                        <div className="relative h-40 overflow-hidden">
+                          <img
+                            src={nivel.imagen}
+                            alt=""
+                            loading="lazy"
+                            className="kenburns h-full w-full object-cover"
+                          />
+                          {completo && (
+                            <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-verde px-3 py-1 text-xs font-black uppercase tracking-wider text-crema shadow">
+                              <IconCheck className="h-3.5 w-3.5" /> Completado
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <button
                         type="button"
                         onClick={() => setNivelAbierto(abierto ? null : nivel.id)}
@@ -506,7 +553,19 @@ export default function CocinaBasica({
                           <span className="block font-display text-xl font-black leading-tight text-tinta">
                             {nivel.titulo}
                           </span>
-                          <span className="mt-0.5 block text-sm font-bold text-rojo">{nivel.tiempo}</span>
+                          <span className="mt-1 flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-bold text-rojo">{nivel.tiempo}</span>
+                            {nivel.video && (
+                              <span className="rounded bg-papel-2 px-2 py-0.5 text-[11px] font-black uppercase tracking-wider text-uva-2">
+                                Con video
+                              </span>
+                            )}
+                            {completo && !nivel.imagen && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-verde px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider text-crema">
+                                <IconCheck className="h-3 w-3" /> Completado
+                              </span>
+                            )}
+                          </span>
                         </span>
                         <IconChevron
                           className={`h-5 w-5 shrink-0 text-uva-2 transition-transform duration-300 ${abierto ? "rotate-180" : ""}`}
@@ -525,6 +584,52 @@ export default function CocinaBasica({
                               </li>
                             ))}
                           </ol>
+                          {nivel.video && (
+                            <div className="mt-6">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <p className="text-sm font-black uppercase tracking-[0.18em] text-rojo">
+                                  Video del tutorial
+                                </p>
+                                <a
+                                  href={`https://www.youtube.com/watch?v=${nivel.video}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-sm font-bold text-verde transition-colors duration-300 hover:text-verde-2"
+                                >
+                                  Verlo en YouTube <IconExterno className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                              <div className="mt-3 aspect-video overflow-hidden rounded-lg border-2 border-tinta/10 bg-tinta shadow">
+                                <iframe
+                                  src={`https://www.youtube-nocookie.com/embed/${nivel.video}`}
+                                  title={`Video del nivel ${nivel.titulo}`}
+                                  loading="lazy"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                  allowFullScreen
+                                  className="h-full w-full"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          {logueado ? (
+                            <button
+                              type="button"
+                              onClick={() => onCompletar(nivel.id)}
+                              className={`mt-6 flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-3.5 text-lg font-bold text-crema shadow transition-all duration-300 hover:-translate-y-0.5 ${
+                                completo ? "bg-verde-2" : "bg-verde hover:bg-verde-2"
+                              }`}
+                            >
+                              <IconCheck className="h-5 w-5" />
+                              {completo
+                                ? "Nivel completado — toca para deshacer"
+                                : "Marcar como Completado"}
+                            </button>
+                          ) : (
+                            <p className="mt-5 rounded-lg bg-papel-2 px-4 py-3 text-center text-sm font-bold leading-relaxed text-uva-2">
+                              Inicia sesión (o crea tu cuenta) para marcar este nivel como
+                              completado: también sube tu nivel de cocinero.
+                            </p>
+                          )}
                           {esAdmin && (
                             <button
                               type="button"

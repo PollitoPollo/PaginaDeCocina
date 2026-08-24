@@ -14,7 +14,9 @@ import Internacional from "./pages/Internacional";
 import {
   aprendidasDeUsuario,
   alternarAprendida as alternarEnDisco,
+  alternarNivelCompletado as alternarNivelEnDisco,
   cerrarSesion,
+  completosDeUsuario,
   nivelPara,
   todasLasRecetas,
   usuarioDeSesion,
@@ -53,6 +55,10 @@ export default function App() {
     const u = usuarioDeSesion();
     return u ? aprendidasDeUsuario(u.id) : [];
   });
+  const [nivelesCompletos, setNivelesCompletos] = useState<string[]>(() => {
+    const u = usuarioDeSesion();
+    return u ? completosDeUsuario(u.id) : [];
+  });
   const [recetas, setRecetas] = useState(() => todasLasRecetas());
   const [modalAuth, setModalAuth] = useState<ModoAuth | null>(null);
   const [formReceta, setFormReceta] = useState(false);
@@ -69,6 +75,7 @@ export default function App() {
   const manejarExito = (usuario: Usuario) => {
     setSesion(usuario);
     setAprendidas(aprendidasDeUsuario(usuario.id));
+    setNivelesCompletos(completosDeUsuario(usuario.id));
     setModalAuth(null);
   };
 
@@ -76,7 +83,17 @@ export default function App() {
     cerrarSesion();
     setSesion(null);
     setAprendidas([]);
+    setNivelesCompletos([]);
     avisar("Sesión cerrada. ¡Vuelve pronto a cocinar!");
+  };
+
+  const avisarSubida = (mensajeBase: string, nivelAntes: number, totalAhora: number) => {
+    const nivel = nivelPara(totalAhora);
+    avisar(
+      nivel.indice > nivelAntes
+        ? `${mensajeBase} ¡Subiste a nivel ${nivel.indice + 1}: ${nivel.actual.nombre}!`
+        : mensajeBase
+    );
   };
 
   const alternarAprendida = (recetaId: string) => {
@@ -85,19 +102,39 @@ export default function App() {
       setModalAuth("login");
       return;
     }
-    const nivelAntes = nivelPara(aprendidas.length).indice;
+    const nivelAntes = nivelPara(aprendidas.length + nivelesCompletos.length).indice;
     const quedoAprendida = alternarEnDisco(sesion.id, recetaId);
     const lista = aprendidasDeUsuario(sesion.id);
     setAprendidas(lista);
     if (quedoAprendida) {
-      const nivel = nivelPara(lista.length);
-      avisar(
-        nivel.indice > nivelAntes
-          ? `¡Receta aprendida! Subiste a nivel ${nivel.indice + 1}: ${nivel.actual.nombre}.`
-          : "¡Bien hecho! Receta marcada como aprendida."
+      avisarSubida(
+        "¡Bien hecho! Receta marcada como aprendida.",
+        nivelAntes,
+        lista.length + nivelesCompletos.length
       );
     } else {
       avisar("Receta quitada de tus aprendidas.");
+    }
+  };
+
+  const alternarNivelCompletado = (nivelId: string) => {
+    if (!sesion) {
+      avisar("Inicia sesión para marcar niveles como completados.");
+      setModalAuth("login");
+      return;
+    }
+    const nivelAntes = nivelPara(aprendidas.length + nivelesCompletos.length).indice;
+    const quedoCompletado = alternarNivelEnDisco(sesion.id, nivelId);
+    const lista = completosDeUsuario(sesion.id);
+    setNivelesCompletos(lista);
+    if (quedoCompletado) {
+      avisarSubida(
+        "¡Nivel de cocina básica completado!",
+        nivelAntes,
+        aprendidas.length + lista.length
+      );
+    } else {
+      avisar("Nivel quitado de tus completados.");
     }
   };
 
@@ -113,6 +150,7 @@ export default function App() {
               sesion={sesion}
               aprendidas={aprendidas}
               recetas={recetas}
+              nivelCompletos={nivelesCompletos.length}
               onAbrirAuth={(modo) => setModalAuth(modo)}
               onCerrarSesion={manejarCierre}
               onAgregarReceta={() => setFormReceta(true)}
@@ -136,9 +174,28 @@ export default function App() {
           />
           <Route
             path="/cocina-basica"
-            element={<CocinaBasica esAdmin={!!sesion?.esAdmin} avisar={avisar} />}
+            element={
+              <CocinaBasica
+                esAdmin={!!sesion?.esAdmin}
+                logueado={!!sesion}
+                completos={nivelesCompletos}
+                onCompletar={alternarNivelCompletado}
+                avisar={avisar}
+              />
+            }
           />
-          <Route path="/internacional" element={<Internacional />} />
+          <Route
+            path="/internacional"
+            element={
+              <Internacional
+                esAdmin={!!sesion?.esAdmin}
+                logueado={!!sesion}
+                aprendidas={aprendidas}
+                onAlternarAprendida={alternarAprendida}
+                avisar={avisar}
+              />
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
