@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent, type SVGProps } from "react";
-import { IconCerrar, IconCheck, IconChevron, IconExterno, IconMas, Modal, Reveal } from "../components/ui";
+import { IconCerrar, IconCheck, IconChevron, IconEditar, IconExterno, IconMas, Modal, Reveal } from "../components/ui";
 import {
   addChef,
   addConsejo,
@@ -242,8 +242,24 @@ function FormNivel({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg:
   );
 }
 
-function FormChef({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: string) => void }) {
-  const [c, setC] = useState({ nombre: "", titulo: "", bio: "", logros: "", platos: "", enlace: "" });
+function FormChef({
+  inicial,
+  onCerrar,
+  onListo,
+}: {
+  inicial: Chef | null;
+  onCerrar: () => void;
+  onListo: (msg: string) => void;
+}) {
+  const [c, setC] = useState({
+    nombre: inicial?.nombre ?? "",
+    titulo: inicial?.titulo ?? "",
+    foto: inicial?.foto ?? "",
+    bio: inicial?.bio ?? "",
+    logros: inicial ? inicial.logros.join("\n") : "",
+    platos: inicial ? inicial.platos.join("\n") : "",
+    enlace: inicial?.enlace ?? "",
+  });
   const [error, setError] = useState("");
   const set = (campo: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setC({ ...c, [campo]: e.target.value });
@@ -258,15 +274,20 @@ function FormChef({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: 
     if (platos.length < 1) return setError("Escribe al menos 1 plato estrella, uno por línea.");
     if (!/^https?:\/\//.test(c.enlace.trim())) return setError("El enlace debe empezar con http:// o https://");
     addChef({
-      id: `chef-${Date.now()}`,
+      id: inicial?.id ?? `chef-${Date.now()}`,
       nombre: c.nombre.trim(),
       titulo: c.titulo.trim() || "Cocinero peruano",
+      foto: c.foto.trim() || undefined,
       bio: c.bio.trim(),
       logros,
       platos,
       enlace: c.enlace.trim(),
     });
-    onListo(`Cocinero agregado: ${c.nombre.trim()}.`);
+    onListo(
+      inicial
+        ? `Datos de ${c.nombre.trim()} actualizados.`
+        : `Cocinero agregado: ${c.nombre.trim()}.`
+    );
     onCerrar();
   };
 
@@ -278,7 +299,9 @@ function FormChef({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: 
         </button>
         <div className="bg-verde-2 px-6 pb-6 pt-9 text-crema sm:px-8">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-aji-2">Solo administrador</p>
-          <h2 className="mt-1.5 font-display text-3xl font-black">Agregar cocinero</h2>
+          <h2 className="mt-1.5 font-display text-3xl font-black">
+            {inicial ? `Editar a ${inicial.nombre}` : "Agregar cocinero"}
+          </h2>
         </div>
         <form onSubmit={enviar} className="space-y-4 px-6 py-6 sm:px-8">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -290,6 +313,10 @@ function FormChef({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: 
               <label htmlFor="ch-titulo" className={claseLabel}>Título o apodo</label>
               <input id="ch-titulo" value={c.titulo} onChange={set("titulo")} placeholder="Por ejemplo: La reina del sabor criollo" className={claseInput} />
             </div>
+          </div>
+          <div>
+            <label htmlFor="ch-foto" className={claseLabel}>Foto del cocinero (enlace, opcional)</label>
+            <input id="ch-foto" value={c.foto} onChange={set("foto")} placeholder="https://… (sin foto se muestra su monograma)" className={claseInput} />
           </div>
           <div>
             <label htmlFor="ch-bio" className={claseLabel}>Biografía corta *</label>
@@ -309,7 +336,7 @@ function FormChef({ onCerrar, onListo }: { onCerrar: () => void; onListo: (msg: 
           </div>
           {error && <p role="alert" className="rounded-lg border-2 border-rojo/40 bg-rojo/10 px-4 py-3 text-sm font-bold text-rojo-2">{error}</p>}
           <button type="submit" className="w-full rounded-lg bg-verde px-6 py-3.5 text-lg font-bold text-crema transition-all hover:-translate-y-0.5 hover:bg-verde-2">
-            Agregar cocinero
+            {inicial ? "Guardar cambios" : "Agregar cocinero"}
           </button>
         </form>
       </div>
@@ -380,6 +407,7 @@ export default function CocinaBasica({
   const [consejos, setConsejos] = useState<ConsejoUtensilio[]>(() => getConsejos());
   const [nivelAbierto, setNivelAbierto] = useState<string | null>(null);
   const [modal, setModal] = useState<"nivel" | "chef" | "consejo" | null>(null);
+  const [editandoChef, setEditandoChef] = useState<Chef | null>(null);
 
   return (
     <div className="bg-papel">
@@ -843,9 +871,18 @@ export default function CocinaBasica({
                   <Reveal key={chef.id} delay={(i % 2) * 120}>
                     <article className="flex h-full flex-col rounded-xl border-2 border-tinta/10 bg-crema p-7 shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:border-rojo/40 hover:shadow-xl">
                       <div className="flex items-center gap-5">
-                        <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-uva font-display text-2xl font-black text-aji shadow-inner">
-                          {iniciales}
-                        </span>
+                        {chef.foto ? (
+                          <img
+                            src={chef.foto}
+                            alt={`Foto de ${chef.nombre}`}
+                            loading="lazy"
+                            className="h-16 w-16 shrink-0 rounded-full border-2 border-aji object-cover shadow-inner"
+                          />
+                        ) : (
+                          <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-uva font-display text-2xl font-black text-aji shadow-inner">
+                            {iniciales}
+                          </span>
+                        )}
                         <div>
                           <h3 className="font-display text-2xl font-black leading-tight text-tinta">
                             {chef.nombre}
@@ -884,17 +921,29 @@ export default function CocinaBasica({
                           Conocer más sobre {chef.nombre.split(" ")[0]} <IconExterno className="h-4 w-4" />
                         </a>
                         {esAdmin && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              eliminarChef(chef.id);
-                              setChefs(getChefs());
-                              avisar(`Cocinero ${chef.nombre} eliminado.`);
-                            }}
-                            className="inline-flex items-center gap-1.5 text-sm font-bold text-uva-2 underline-offset-4 hover:text-rojo hover:underline"
-                          >
-                            <IconCerrar className="h-4 w-4" /> Quitar
-                          </button>
+                          <span className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditandoChef(chef);
+                                setModal("chef");
+                              }}
+                              className="inline-flex items-center gap-1.5 text-sm font-bold text-verde underline-offset-4 hover:text-verde-2 hover:underline"
+                            >
+                              <IconEditar className="h-4 w-4" /> Editar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                eliminarChef(chef.id);
+                                setChefs(getChefs());
+                                avisar(`Cocinero ${chef.nombre} eliminado.`);
+                              }}
+                              className="inline-flex items-center gap-1.5 text-sm font-bold text-uva-2 underline-offset-4 hover:text-rojo hover:underline"
+                            >
+                              <IconCerrar className="h-4 w-4" /> Quitar
+                            </button>
+                          </span>
                         )}
                       </div>
                     </article>
@@ -917,9 +966,15 @@ export default function CocinaBasica({
       )}
       {modal === "chef" && (
         <FormChef
-          onCerrar={() => setModal(null)}
+          key={editandoChef?.id ?? "chef-nuevo"}
+          inicial={editandoChef}
+          onCerrar={() => {
+            setModal(null);
+            setEditandoChef(null);
+          }}
           onListo={(msg) => {
             setChefs(getChefs());
+            setEditandoChef(null);
             avisar(msg);
           }}
         />

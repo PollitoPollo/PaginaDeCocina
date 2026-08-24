@@ -10,13 +10,17 @@ import Recipes from "./components/Recipes";
 import Videos from "./components/Videos";
 import { Toast } from "./components/ui";
 import CocinaBasica from "./pages/CocinaBasica";
+import Donaciones from "./pages/Donaciones";
 import Internacional from "./pages/Internacional";
+import Top10 from "./pages/Top10";
 import {
   aprendidasDeUsuario,
   alternarAprendida as alternarEnDisco,
-  alternarNivelCompletado as alternarNivelEnDisco,
+  calificacionesDeUsuario,
+  calificar as calificarEnDisco,
   cerrarSesion,
   completosDeUsuario,
+  alternarNivelCompletado as alternarNivelEnDisco,
   nivelPara,
   todasLasRecetas,
   usuarioDeSesion,
@@ -36,8 +40,10 @@ function Portada(props: {
   aprendidas: string[];
   logueado: boolean;
   esAdmin: boolean;
+  calificaciones: Record<string, number>;
   onAlternarAprendida: (recetaId: string) => void;
   onAgregarReceta: () => void;
+  onCalificar: (recetaId: string, estrellas: number) => void;
 }) {
   return (
     <main>
@@ -59,6 +65,10 @@ export default function App() {
     const u = usuarioDeSesion();
     return u ? completosDeUsuario(u.id) : [];
   });
+  const [calificaciones, setCalificaciones] = useState<Record<string, number>>(() => {
+    const u = usuarioDeSesion();
+    return u ? calificacionesDeUsuario(u.id) : {};
+  });
   const [recetas, setRecetas] = useState(() => todasLasRecetas());
   const [modalAuth, setModalAuth] = useState<ModoAuth | null>(null);
   const [formReceta, setFormReceta] = useState(false);
@@ -76,6 +86,7 @@ export default function App() {
     setSesion(usuario);
     setAprendidas(aprendidasDeUsuario(usuario.id));
     setNivelesCompletos(completosDeUsuario(usuario.id));
+    setCalificaciones(calificacionesDeUsuario(usuario.id));
     setModalAuth(null);
   };
 
@@ -84,6 +95,7 @@ export default function App() {
     setSesion(null);
     setAprendidas([]);
     setNivelesCompletos([]);
+    setCalificaciones({});
     avisar("Sesión cerrada. ¡Vuelve pronto a cocinar!");
   };
 
@@ -138,6 +150,21 @@ export default function App() {
     }
   };
 
+  const calificarReceta = (recetaId: string, estrellas: number) => {
+    if (!sesion) {
+      avisar("Inicia sesión para calificar tus recetas aprendidas.");
+      setModalAuth("login");
+      return;
+    }
+    calificarEnDisco(sesion.id, recetaId, estrellas);
+    setCalificaciones(calificacionesDeUsuario(sesion.id));
+    avisar(
+      estrellas >= 4
+        ? `¡Gracias! La calificaste con ${estrellas} estrellas.`
+        : `Gracias por tu calificación de ${estrellas} ${estrellas === 1 ? "estrella" : "estrellas"}.`
+    );
+  };
+
   return (
     <HashRouter>
       <ScrollAlInicio />
@@ -167,8 +194,10 @@ export default function App() {
                 aprendidas={aprendidas}
                 logueado={!!sesion}
                 esAdmin={!!sesion?.esAdmin}
+                calificaciones={calificaciones}
                 onAlternarAprendida={alternarAprendida}
                 onAgregarReceta={() => setFormReceta(true)}
+                onCalificar={calificarReceta}
               />
             }
           />
@@ -195,6 +224,11 @@ export default function App() {
                 avisar={avisar}
               />
             }
+          />
+          <Route path="/top10" element={<Top10 esAdmin={!!sesion?.esAdmin} avisar={avisar} />} />
+          <Route
+            path="/donaciones"
+            element={<Donaciones esAdmin={!!sesion?.esAdmin} avisar={avisar} />}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

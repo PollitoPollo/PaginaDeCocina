@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IconOlla } from "./ui";
 
 const SECCIONES = [
@@ -9,16 +9,18 @@ const SECCIONES = [
   { id: "enlaces", nombre: "Enlaces" },
 ];
 
-const RUTAS = [
-  { path: "/cocina-basica", nombre: "Cocina Básica" },
-  { path: "/internacional", nombre: "Internacional" },
+const PAGINAS = [
+  { ruta: "/cocina-basica", nombre: "Cocina Básica" },
+  { ruta: "/internacional", nombre: "Internacional" },
+  { ruta: "/top10", nombre: "Top 10" },
+  { ruta: "/donaciones", nombre: "Donaciones" },
 ];
 
 export default function Nav({ auth }: { auth: ReactNode }) {
   const [progreso, setProgreso] = useState(0);
   const [activa, setActiva] = useState("");
-  const navegar = useNavigate();
   const location = useLocation();
+  const enPortada = location.pathname === "/";
 
   useEffect(() => {
     const alScroll = () => {
@@ -31,7 +33,7 @@ export default function Nav({ auth }: { auth: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (location.pathname !== "/") return;
+    if (!enPortada) return;
     const io = new IntersectionObserver(
       (entradas) => {
         entradas.forEach((e) => {
@@ -45,19 +47,7 @@ export default function Nav({ auth }: { auth: ReactNode }) {
       if (el) io.observe(el);
     });
     return () => io.disconnect();
-  }, [location.pathname]);
-
-  /* Salta a una sección de la portada, estés en la página que estés. */
-  const irASeccion = (id: string) => {
-    const saltar = () =>
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (location.pathname !== "/") {
-      navegar("/");
-      setTimeout(saltar, 120);
-    } else {
-      saltar();
-    }
-  };
+  }, [enPortada]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-uva-2 bg-tinta/95 text-papel backdrop-blur-sm">
@@ -67,8 +57,8 @@ export default function Nav({ auth }: { auth: ReactNode }) {
         style={{ width: `${progreso}%` }}
         aria-hidden="true"
       />
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
-        <Link to="/" className="group flex items-center gap-3">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+        <Link to="/" className="group flex shrink-0 items-center gap-3">
           <span className="grid h-11 w-11 place-items-center rounded-lg bg-aji text-tinta transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
             <IconOlla className="h-6 w-6" />
           </span>
@@ -77,38 +67,44 @@ export default function Nav({ auth }: { auth: ReactNode }) {
               Cocina <span className="text-aji">Pulguita</span>
             </span>
             <span className="block text-[11px] font-bold uppercase tracking-[0.22em] text-lila">
-              escuela y sabor
+              escuela de sabor
             </span>
           </span>
         </Link>
 
         <nav
-          aria-label="Secciones del sitio"
-          className="ml-auto hidden items-center gap-6 xl:gap-7 lg:flex"
+          aria-label="Secciones y páginas del sitio"
+          className="ml-auto hidden items-center gap-5 lg:flex"
         >
           {SECCIONES.map(({ id, nombre }) => (
-            <button
+            <a
               key={id}
-              type="button"
-              onClick={() => irASeccion(id)}
-              className={`nav-link font-bold transition-colors ${
-                location.pathname === "/" && activa === id
-                  ? "active text-aji"
-                  : "text-papel hover:text-aji"
+              href="#/"
+              onClick={(e) => {
+                e.preventDefault();
+                const saltar = () =>
+                  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+                if (!enPortada) {
+                  window.location.hash = "#/";
+                  setTimeout(saltar, 150);
+                } else {
+                  saltar();
+                }
+              }}
+              className={`nav-link text-[15px] font-bold transition-colors ${
+                enPortada && activa === id ? "active text-aji" : "text-papel hover:text-aji"
               }`}
             >
               {nombre}
-            </button>
+            </a>
           ))}
-
-          <span className="h-6 w-px bg-uva-2" aria-hidden="true" />
-
-          {RUTAS.map(({ path, nombre }) => (
+          <span aria-hidden="true" className="h-5 w-px bg-uva-2" />
+          {PAGINAS.map(({ ruta, nombre }) => (
             <Link
-              key={path}
-              to={path}
-              className={`nav-link font-bold transition-colors ${
-                location.pathname === path ? "active text-aji" : "text-papel hover:text-aji"
+              key={ruta}
+              to={ruta}
+              className={`nav-link text-[15px] font-bold transition-colors ${
+                location.pathname === ruta ? "active text-aji" : "text-papel hover:text-aji"
               }`}
             >
               {nombre}
@@ -125,22 +121,31 @@ export default function Nav({ auth }: { auth: ReactNode }) {
         className="flex gap-6 overflow-x-auto border-t border-uva-2 px-4 py-2 lg:hidden"
       >
         {SECCIONES.map(({ id, nombre }) => (
-          <button
+          <a
             key={id}
-            type="button"
-            onClick={() => irASeccion(id)}
+            href={`#/`}
+            onClick={(e) => {
+              e.preventDefault();
+              const saltar = () =>
+                document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+              if (!enPortada) {
+                window.location.hash = "#/";
+                setTimeout(saltar, 150);
+              } else {
+                saltar();
+              }
+            }}
             className="whitespace-nowrap text-sm font-bold text-papel"
           >
             {nombre}
-          </button>
+          </a>
         ))}
-        <span className="my-1 w-px shrink-0 bg-uva-2" aria-hidden="true" />
-        {RUTAS.map(({ path, nombre }) => (
+        {PAGINAS.map(({ ruta, nombre }) => (
           <Link
-            key={path}
-            to={path}
+            key={ruta}
+            to={ruta}
             className={`whitespace-nowrap text-sm font-bold ${
-              location.pathname === path ? "text-aji" : "text-papel"
+              location.pathname === ruta ? "text-aji" : "text-papel"
             }`}
           >
             {nombre}

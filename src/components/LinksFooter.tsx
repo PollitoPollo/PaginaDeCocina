@@ -211,6 +211,24 @@ export default function LinksFooter({ onToast }: { onToast: (msg: string) => voi
                     Internacional
                   </button>
                 </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => navegar("/top10")}
+                    className="font-bold text-lila transition-colors hover:text-aji"
+                  >
+                    Top 10 · 2025
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => navegar("/donaciones")}
+                    className="font-bold text-lila transition-colors hover:text-aji"
+                  >
+                    Donaciones
+                  </button>
+                </li>
               </ul>
             </nav>
             <div>

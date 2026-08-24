@@ -235,3 +235,42 @@ export function IconLlave({ className = "h-5 w-5", ...resto }: IconProps) {
     </svg>
   );
 }
+
+export function IconEstrella({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true" {...resto}>
+      <path d="M12 3.3 14.7 8.7l5.9.9-4.3 4.1 1 5.9L12 16.8l-5.3 2.8 1-5.9-4.3-4.1 5.9-.9L12 3.3Z" />
+    </svg>
+  );
+}
+
+export function IconCorazon({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <path
+        d="M12 20.2 4.8 13a4.7 4.7 0 0 1 0-6.6 4.6 4.6 0 0 1 6.5 0l.7.7.7-.7a4.6 4.6 0 0 1 6.5 0 4.7 4.7 0 0 1 0 6.6L12 20.2Z"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function IconEditar({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <path d="M14.5 5 19 9.5 8.5 20H4v-4.5L14.5 5Z" strokeLinejoin="round" />
+      <path d="m12.5 7 4.5 4.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconRedes({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <circle cx="6" cy="12" r="2.6" />
+      <circle cx="17.5" cy="5.5" r="2.6" />
+      <circle cx="17.5" cy="18.5" r="2.6" />
+      <path d="m8.4 10.7 6.8-4M8.4 13.3l6.8 4" strokeLinecap="round" />
+    </svg>
+  );
+}
