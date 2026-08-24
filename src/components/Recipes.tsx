@@ -3,6 +3,7 @@ import { VIDEO_POR_RECETA, type Receta } from "../data";
 import {
   IconCheck,
   IconCerrar,
+  IconEstrella,
   IconExterno,
   IconLlama,
   IconMas,
@@ -23,15 +24,19 @@ export default function Recipes({
   aprendidas,
   logueado,
   esAdmin,
+  calificaciones,
   onAlternarAprendida,
   onAgregarReceta,
+  onCalificar,
 }: {
   recetas: Receta[];
   aprendidas: string[];
   logueado: boolean;
   esAdmin: boolean;
+  calificaciones: Record<string, number>;
   onAlternarAprendida: (recetaId: string) => void;
   onAgregarReceta: () => void;
+  onCalificar: (recetaId: string, estrellas: number) => void;
 }) {
   const [filtro, setFiltro] = useState<string>("Todas");
   const [abierta, setAbierta] = useState<Receta | null>(null);
@@ -43,6 +48,7 @@ export default function Recipes({
   const setAprendidas = useMemo(() => new Set(aprendidas), [aprendidas]);
   const esAprendida = abierta ? setAprendidas.has(abierta.id) : false;
   const videoId = abierta ? abierta.video ?? VIDEO_POR_RECETA[abierta.id] : undefined;
+  const califActual = abierta ? calificaciones[abierta.id] ?? 0 : 0;
 
   return (
     <section id="recetas" className="scroll-mt-24 bg-papel py-24">
@@ -119,6 +125,24 @@ export default function Recipes({
                     {receta.propia && (
                       <span className="absolute bottom-3 left-3 rounded-full bg-aji px-3 py-1 text-xs font-black uppercase tracking-wider text-tinta shadow">
                         Nueva de la comunidad
+                      </span>
+                    )}
+                    {calificaciones[receta.id] > 0 && (
+                      <span
+                        className="absolute bottom-3 right-3 flex items-center gap-1 rounded-md bg-tinta/85 px-2.5 py-1.5 shadow-lg"
+                        title={`Tu calificación: ${calificaciones[receta.id]} de 5 estrellas`}
+                      >
+                        {Array.from({ length: 5 }).map((_, si) => (
+                          <IconEstrella
+                            key={si}
+                            className={`h-3.5 w-3.5 ${
+                              si < calificaciones[receta.id] ? "text-aji" : "text-papel/30"
+                            }`}
+                          />
+                        ))}
+                        <span className="ml-0.5 font-display text-xs font-black text-crema">
+                          {calificaciones[receta.id]}
+                        </span>
                       </span>
                     )}
                   </div>
@@ -316,6 +340,49 @@ export default function Recipes({
                       ? "¡Ya sabes preparar este plato! Está guardado en tu nivel de cocina. Toca el botón de nuevo si quieres quitarlo."
                       : "Márcala cuando ya sepas prepararla: así sube tu nivel de cocina."}
                 </p>
+
+                {/* Calificación con estrellas, disponible al aprender la receta */}
+                {logueado && esAprendida && (
+                  <div className="mx-auto mt-6 max-w-md rounded-xl border-2 border-aji/40 bg-papel-2 px-5 py-4">
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-uva-2">
+                      Tu calificación de esta receta
+                    </p>
+                    <div
+                      className="mt-2.5 flex items-center justify-center gap-1.5"
+                      role="group"
+                      aria-label="Calificar la receta de 1 a 5 estrellas"
+                    >
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => onCalificar(abierta.id, n)}
+                          aria-label={`Calificar con ${n} de 5 estrellas`}
+                          aria-pressed={califActual === n}
+                          className="transition-transform duration-200 hover:scale-125"
+                        >
+                          <IconEstrella
+                            className={`h-8 w-8 transition-colors duration-200 ${
+                              n <= califActual
+                                ? "text-aji drop-shadow-sm"
+                                : "text-uva-2/25 hover:text-aji/60"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-sm font-bold text-uva-2">
+                      {califActual > 0
+                        ? `Calificaste con ${califActual} ${califActual === 1 ? "estrella" : "estrellas"}. ¡Gracias!`
+                        : "Toca una estrella: 1 es poquito, 5 es espectacular."}
+                    </p>
+                  </div>
+                )}
+                {logueado && !esAprendida && (
+                  <p className="mx-auto mt-5 max-w-md text-sm font-bold text-uva-2">
+                    Cuando la marques como aprendida, podrás calificarla con estrellas.
+                  </p>
+                )}
               </div>
             </div>
           </div>

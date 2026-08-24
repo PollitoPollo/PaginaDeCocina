@@ -1,4 +1,4 @@
-import { RECETAS, type Receta, type RecetaMundo } from "../data";
+import { RECETAS, TOP10_BASE, type PlatoTop, type Receta, type RecetaMundo } from "../data";
 
 export interface Usuario {
   id: string;
@@ -278,6 +278,7 @@ export function agregarRecetaInternacional(receta: RecetaMundo) {
 export interface Chef {
   id: string;
   nombre: string;
+  foto?: string;
   titulo: string;
   bio: string;
   logros: string[];
@@ -364,8 +365,14 @@ export function getChefs(): Chef[] {
   return CHEFS_INICIALES;
 }
 
+/** Agrega un cocinero nuevo o, si ya existe su id, actualiza sus datos (editar). */
 export function addChef(chef: Chef) {
-  escribir(K_CHEFS, [...getChefs(), chef]);
+  const chefs = getChefs();
+  const existe = chefs.some((c) => c.id === chef.id);
+  escribir(
+    K_CHEFS,
+    existe ? chefs.map((c) => (c.id === chef.id ? chef : c)) : [...chefs, chef]
+  );
 }
 
 export function eliminarChef(id: string) {
@@ -437,4 +444,76 @@ export function extraerIdYouTube(valor: string): string {
     /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/
   );
   return coincidencia ? coincidencia[1] : limpio;
+}
+
+/* ---------- Calificaciones con estrellas (1 a 5) ---------- */
+
+const claveCalif = (idUsuario: string) => `cp_calif_${idUsuario}`;
+
+export function calificacionesDeUsuario(idUsuario: string): Record<string, number> {
+  return leer<Record<string, number>>(claveCalif(idUsuario), {});
+}
+
+export function calificar(idUsuario: string, recetaId: string, estrellas: number) {
+  const mapa = calificacionesDeUsuario(idUsuario);
+  mapa[recetaId] = Math.min(5, Math.max(1, Math.round(estrellas)));
+  escribir(claveCalif(idUsuario), mapa);
+}
+
+/* ---------- Top 10 · La gala del sabor 2025 ---------- */
+
+const K_TOP10 = "cp_top10";
+
+export function getTop10(): PlatoTop[] {
+  const guardado = leer<PlatoTop[] | null>(K_TOP10, null);
+  return guardado && Array.isArray(guardado) && guardado.length > 0
+    ? guardado
+    : TOP10_BASE;
+}
+
+/** Reemplaza los datos de un plato del Top 10 (solo el administrador). */
+export function editarPlatoTop(id: string, datos: PlatoTop) {
+  escribir(
+    K_TOP10,
+    getTop10().map((p) => (p.id === id ? { ...datos, id } : p))
+  );
+}
+
+/* ---------- Donaciones ---------- */
+
+export interface Donaciones {
+  titulo: string;
+  mensaje: string;
+  qr: string;
+  alias: string;
+}
+
+const DONACIONES_DEF: Donaciones = {
+  titulo: "¡Gracias por mantener viva esta cocina!",
+  mensaje:
+    "Cocina Pulguita es un proyecto hecho con cariño para que las recetas del Perú y del mundo lleguen gratis a todas las mesas, para jóvenes y para abuelos. Tu aporte, grande o pequeño, se convierte en más videos, más recetas probadas y más escuela abierta. Cada donación es un plato más para todos. ¡Mil gracias por ser parte de esta familia!",
+  qr: "",
+  alias: "",
+};
+
+const K_DONACIONES = "cp_donaciones";
+
+export function getDonaciones(): Donaciones {
+  const d = leer<Partial<Donaciones> | null>(K_DONACIONES, null);
+  return d ? { ...DONACIONES_DEF, ...d } : DONACIONES_DEF;
+}
+
+export function guardarDonaciones(d: Donaciones) {
+  escribir(K_DONACIONES, d);
+}
+
+/* ---------- Redes sociales del creador ---------- */
+
+export const REDES_SOCIALES = [
+  { nombre: "Facebook", url: "https://www.facebook.com/juan.carlos.romero.castro.2025" },
+  { nombre: "YouTube", url: "https://www.youtube.com/@lobovideosES" },
+];
+
+export function abrirRedes() {
+  REDES_SOCIALES.forEach((red) => window.open(red.url, "_blank", "noopener"));
 }

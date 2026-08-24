@@ -577,6 +577,365 @@ export const VIDEO_POR_RECETA: Record<string, string> = {
   chicha: "8tRAKTwS0_s",
 };
 
+/* Mesas internacionales, reutilizadas en el Top 10 */
+export const IMGMX =
+  "https://image.qwenlm.ai/generated-images/f545d9bb-6f39-46ef-a49c-1918bcd798e3/_result.png";
+export const IMGIT =
+  "https://image.qwenlm.ai/generated-images/6fd85ecd-8d47-4b63-afb2-a66494be91bf/_result.png";
+export const IMGES =
+  "https://image.qwenlm.ai/generated-images/5228ddfe-563c-4cc7-bc7e-70950b4cc494/_result.png";
+export const IMGAR =
+  "https://image.qwenlm.ai/generated-images/e3df267a-b6e2-4b5a-9484-45305c486b80/_result.png";
+
+/* ---------------- Top 10 · La gala del sabor 2025 ---------------- */
+
+export interface PlatoTop {
+  id: string;
+  puesto: number;
+  nombre: string;
+  origen: string;
+  rating: number;
+  votos: string;
+  tiempo: string;
+  dificultad: "Fácil" | "Media" | "Exigente";
+  porciones: number;
+  imagen: string;
+  descripcion: string;
+  ingredientes: string[];
+  pasos: string[];
+  tip: string;
+  veredicto: string;
+  video: string;
+}
+
+export const TOP10_BASE: PlatoTop[] = [
+  {
+    id: "top-1",
+    puesto: 1,
+    nombre: "Ceviche Clásico de Lima",
+    origen: "Costa · Perú",
+    rating: 4.9,
+    votos: "1.284 votos del jurado",
+    tiempo: "30 min",
+    dificultad: "Fácil",
+    porciones: 4,
+    imagen: IMAGENES.ceviche,
+    descripcion:
+      "Pescado fresco cocido en jugo de limón, con cebolla morada y ají limo. El plato que presentó al Perú ante el mundo.",
+    ingredientes: [
+      "600 g de corvina o lenguado fresco",
+      "12 limones jugosos",
+      "1 cebolla morada en pluma",
+      "1 ají limo picado",
+      "1 diente de ajo picado",
+      "Culantro, camote y choclo sancochados",
+    ],
+    pasos: [
+      "Corta el pescado en cubos de 2 cm y sazónalo con sal.",
+      "Añade el ajo y el ají limo; mezcla con suavidad.",
+      "Exprime los limones sobre el bol sin apretarlos.",
+      "Deja reposar de 5 a 8 minutos: ese es todo el “cocinado”.",
+      "Incorpora la cebolla y el culantro, y sirve con camote y choclo.",
+    ],
+    tip: "Ocho minutos de limón bastan: el ceviche perfecto no espera a nadie.",
+    veredicto: "Frescura absoluta. El plato que definió a la cocina peruana ante el mundo.",
+    video: "_ivdbk8kzMg",
+  },
+  {
+    id: "top-2",
+    puesto: 2,
+    nombre: "Lomo Saltado",
+    origen: "Cocina chifa · Perú",
+    rating: 4.9,
+    votos: "1.152 votos del jurado",
+    tiempo: "40 min",
+    dificultad: "Media",
+    porciones: 4,
+    imagen: IMAGENES.lomo,
+    descripcion:
+      "Tiras de res al fuego con cebolla, tomate, sillao y vinagre, sobre papas doradas y arroz. El abrazo del Perú y la China.",
+    ingredientes: [
+      "600 g de lomo de res en tiras",
+      "2 cebollas moradas en gajos",
+      "2 tomates en gajos",
+      "3 cucharadas de sillao y 2 de vinagre tinto",
+      "4 papas para freír y arroz blanco",
+      "Ajo, culantro, comino, sal y pimienta",
+    ],
+    pasos: [
+      "Sazona la carne con sal, pimienta y comino.",
+      "Dora las papas en bastones y mantenlas calientes.",
+      "Sella la carne 2 minutos en sartén humeante; retírala.",
+      "Saltea el ajo, la cebolla, el ají y el tomate.",
+      "Regresa la carne con sillao y vinagre; culantro al final.",
+      "Sirve al momento con papas y arroz.",
+    ],
+    tip: "El saltado no se hierve, se besa con la llama: todo listo antes de encender el fuego.",
+    veredicto: "El mestizaje perfecto entre el wok chino y el corazón criollo.",
+    video: "Oiy05vYSr3s",
+  },
+  {
+    id: "top-3",
+    puesto: 3,
+    nombre: "Ají de Gallina",
+    origen: "Criollo · Perú",
+    rating: 4.8,
+    votos: "1.043 votos del jurado",
+    tiempo: "50 min",
+    dificultad: "Media",
+    porciones: 6,
+    imagen: IMAGENES.aji,
+    descripcion:
+      "Guiso cremoso de gallina con ají amarillo, pan y nueces. Cocina de abrazo con perfume virreinal.",
+    ingredientes: [
+      "1 pechuga de gallina o pollo",
+      "5 cucharadas de pasta de ají amarillo",
+      "4 rebanadas de pan remojadas en leche",
+      "½ taza de nueces molidas",
+      "Cebolla, ajo y caldo de la gallina",
+      "Papas, huevos duros y aceitunas para servir",
+    ],
+    pasos: [
+      "Cocina la gallina con sal y apio; desmenúzala.",
+      "Sofríe la cebolla, el ajo y la pasta de ají amarillo.",
+      "Licúa el pan con leche y caldo, y viértelo al sartén.",
+      "Remueve a fuego bajo hasta lograr una crema suave.",
+      "Añade las nueces y la gallina; sirve sobre papas.",
+    ],
+    tip: "Debe quedar cremoso como un abrazo: aligéralo con caldo si espesa de más.",
+    veredicto: "Cremosidad histórica: un guiso virreinal que sigue abrazando mesas.",
+    video: "WpfUdBSMhYo",
+  },
+  {
+    id: "top-4",
+    puesto: 4,
+    nombre: "Tacos al Pastor",
+    origen: "Ciudad de México",
+    rating: 4.8,
+    votos: "987 votos del jurado",
+    tiempo: "1 h + marinado",
+    dificultad: "Media",
+    porciones: 6,
+    imagen: IMGMX,
+    descripcion:
+      "Cerdo marinado en achiote y chiles, dorado hasta caramelizar, con piña, cebolla y cilantro. Herencia libanesa vuelta ícono chilango.",
+    ingredientes: [
+      "1 kg de lomo de cerdo en filetes",
+      "4 chiles guajillo y 2 chiles anchos hidratados",
+      "2 cucharadas de pasta de achiote",
+      "3 dientes de ajo y 1 trozo de piña",
+      "Tortillas de maíz, cebolla y cilantro",
+      "Vinagre, comino, orégano, sal y pimienta",
+    ],
+    pasos: [
+      "Licúa los chiles con el achiote, el ajo, el vinagre y las especias.",
+      "Marina la carne al menos 4 horas, mejor toda la noche.",
+      "Dórala a fuego muy fuerte hasta caramelizar los bordes.",
+      "Asa la piña y pícala en cuadritos.",
+      "Pica la carne a cuchillo y sirve en tortillas calientes.",
+      "Corona con piña, cebolla, cilantro y limón.",
+    ],
+    tip: "El borde quemadito no es error, es gloria: no tengas miedo de dorar de más.",
+    veredicto: "El trompo dorado que conquistó las noches de la capital mexicana.",
+    video: "GS7g2l6t_Ug",
+  },
+  {
+    id: "top-5",
+    puesto: 5,
+    nombre: "Paella Valenciana",
+    origen: "Valencia · España",
+    rating: 4.7,
+    votos: "921 votos del jurado",
+    tiempo: "1 h 15 min",
+    dificultad: "Exigente",
+    porciones: 6,
+    imagen: IMGES,
+    descripcion:
+      "Arroz de secano con pollo, conejo, judía verde y garrofón, perfumado con azafrán. La técnica española del socarrat en su máxima expresión.",
+    ingredientes: [
+      "400 g de arroz bomba",
+      "½ pollo troceado y 300 g de conejo",
+      "200 g de judía verde plana y 100 g de garrofón",
+      "1 tomate rallado y 1 cucharadita de pimentón",
+      "Unas hebras de azafrán",
+      "1.2 L de caldo y aceite de oliva virgen",
+    ],
+    pasos: [
+      "Dora las carnes en la paella con aceite de oliva.",
+      "Sofríe las verduras, el tomate y el pimentón.",
+      "Añade el caldo caliente y el azafrán; hierve 10 minutos.",
+      "Reparte el arroz en cruz y no lo toques más.",
+      "Cocina 18 minutos; sube el fuego 1 minuto para el socarrat.",
+      "Deja reposar 5 minutos con un paño antes de servir.",
+    ],
+    tip: "El socarrat —la costrita dorada del fondo— es el premio: escúchalo crepitar.",
+    veredicto: "Arroz, azafrán y socarrat: la paciencia valenciana hecha plato.",
+    video: "P5BrncRPxYM",
+  },
+  {
+    id: "top-6",
+    puesto: 6,
+    nombre: "Spaghetti alla Carbonara",
+    origen: "Roma · Italia",
+    rating: 4.7,
+    votos: "898 votos del jurado",
+    tiempo: "25 min",
+    dificultad: "Media",
+    porciones: 4,
+    imagen: IMGIT,
+    descripcion:
+      "Pasta, guanciale, yemas, pecorino y pimienta negra. Cinco ingredientes y una técnica impecable: la escuela romana en estado puro.",
+    ingredientes: [
+      "400 g de spaghetti",
+      "150 g de guanciale en bastones",
+      "4 yemas de huevo y 1 huevo entero",
+      "80 g de queso pecorino rallado",
+      "Pimienta negra recién molida",
+      "Sal gruesa para el agua de la pasta",
+    ],
+    pasos: [
+      "Dora el guanciale a fuego medio hasta que suelte su grasa.",
+      "Cocina la pasta en agua con sal, un minuto menos que al dente.",
+      "Bate las yemas con el pecorino y bastante pimienta.",
+      "Fuera del fuego, mezcla la pasta con la grasa del guanciale.",
+      "Añade la crema de huevo y un cucharón de agua de cocción.",
+      "Remueve con energía hasta lograr una salsa sedosa.",
+    ],
+    tip: "La carbonara se termina fuera del fuego: si la sartén está muy caliente, harás huevo revuelto.",
+    veredicto: "Cinco ingredientes y una técnica impecable: la lección romana.",
+    video: "Nlm6G6_8GqI",
+  },
+  {
+    id: "top-7",
+    puesto: 7,
+    nombre: "Causa Limeña",
+    origen: "Lima · Perú",
+    rating: 4.7,
+    votos: "861 votos del jurado",
+    tiempo: "45 min",
+    dificultad: "Media",
+    porciones: 6,
+    imagen: IMAGENES.causa,
+    descripcion:
+      "Capas de papa amarilla con ají y limón, rellenas de palta y pollo. Elegancia fría que nació, dicen, para una causa justa.",
+    ingredientes: [
+      "1 kg de papa amarilla sancochada",
+      "4 cucharadas de pasta de ají amarillo",
+      "Jugo de 3 limones y 3 cucharadas de aceite",
+      "1 palta en láminas",
+      "300 g de pollo deshilachado con mayonesa",
+      "Huevo duro y aceitunas para decorar",
+    ],
+    pasos: [
+      "Prensa la papa caliente y sazónala con ají, limón y aceite.",
+      "Amasa hasta obtener una masa lisa y dorada.",
+      "Arma capas en un molde: papa, palta, pollo, papa.",
+      "Refrigera 30 minutos para que tome cuerpo.",
+      "Desmolda y decora con huevo y aceitunas.",
+    ],
+    tip: "La papa se prensa caliente, pero la causa se sirve fría: la espera le da la forma.",
+    veredicto: "Elegancia fría de papa amarilla, ají y limón: Lima en capas.",
+    video: "GG-o8MPBmoY",
+  },
+  {
+    id: "top-8",
+    puesto: 8,
+    nombre: "Anticuchos de Corazón",
+    origen: "Calles de Lima · Perú",
+    rating: 4.6,
+    votos: "812 votos del jurado",
+    tiempo: "1 h + macerado",
+    dificultad: "Media",
+    porciones: 4,
+    imagen: IMAGENES.anticuchos,
+    descripcion:
+      "Brochetas de corazón marinadas en ají panca y doradas a la parrilla. Las reinas de la noche limeña desde el siglo XIX.",
+    ingredientes: [
+      "1 kg de corazón de res en cubos",
+      "½ taza de pasta de ají panca",
+      "¼ de taza de vinagre tinto",
+      "4 dientes de ajo molidos y comino",
+      "2 cucharadas de sillao",
+      "Papas doradas, choclo y crema de rocoto",
+    ],
+    pasos: [
+      "Limpia el corazón y córtalo en cubos de 3 cm.",
+      "Prepara el aderezo con ají panca, vinagre, ajo y especias.",
+      "Macera al menos 4 horas en el refrigerador.",
+      "Ensarta de 4 en 4 y grill a fuego fuerte.",
+      "Pinta con el aderezo mientras se doran, 3 minutos por lado.",
+      "Sirve con papas, choclo y crema de rocoto.",
+    ],
+    tip: "Dorado por fuera, jugoso por dentro: la parrilla caliente hace la mitad del trabajo.",
+    veredicto: "El sabor de la calle limeña, elevado a alta cocina.",
+    video: "uBJmVVbRGxY",
+  },
+  {
+    id: "top-9",
+    puesto: 9,
+    nombre: "Asado con Chimichurri",
+    origen: "Pampas · Argentina",
+    rating: 4.6,
+    votos: "779 votos del jurado",
+    tiempo: "2 h de ritual",
+    dificultad: "Exigente",
+    porciones: 6,
+    imagen: IMGAR,
+    descripcion:
+      "Tira de asado a las brasas con sal gruesa y chimichurri de perejil y ajo. No es una receta: es un ritual de domingo.",
+    ingredientes: [
+      "2 kg de tira de asado",
+      "Sal gruesa",
+      "1 manojo de perejil fresco",
+      "4 dientes de ajo y orégano",
+      "Ají molido y pimentón",
+      "Aceite de girasol y un chorrito de vinagre",
+    ],
+    pasos: [
+      "Enciende leña o carbón y espera brasas parejas.",
+      "Mezcla el chimichurri y déjalo reposar 30 minutos.",
+      "Sala la carne y ponla del lado del hueso primero.",
+      "Cocina a fuego medio 40–50 minutos, sin apuro.",
+      "Dale la vuelta una sola vez, cuando esté dorada.",
+      "Deja reposar 5 minutos y sirve con chimichurri.",
+    ],
+    tip: "El asado no se apura: brasas grises, carne serena y una buena conversación.",
+    veredicto: "Fuego, paciencia y humo: el ritual argentino del fin de semana.",
+    video: "zj-SGpBAkaQ",
+  },
+  {
+    id: "top-10",
+    puesto: 10,
+    nombre: "Chicha Morada",
+    origen: "Todo el Perú",
+    rating: 4.6,
+    votos: "745 votos del jurado",
+    tiempo: "50 min",
+    dificultad: "Fácil",
+    porciones: 8,
+    imagen: IMAGENES.chicha,
+    descripcion:
+      "Maíz morado hervido con piña, membrillo, canela y clavo. La bebida que pintó de morado todas las mesas del país.",
+    ingredientes: [
+      "2 mazorcas de maíz morado con sus pancas",
+      "Cáscaras de 1 piña y 1 membrillo",
+      "2 ramas de canela y 6 clavos de olor",
+      "150 g de azúcar",
+      "Jugo de 2 limones",
+      "3 litros de agua y hielo",
+    ],
+    pasos: [
+      "Hierve el maíz, las cáscaras y las especias 40 minutos.",
+      "Cuela el líquido morado y endúlzalo.",
+      "Enfríalo al menos 2 horas en el refrigerador.",
+      "Sirve con hielo, limón y piña picada.",
+    ],
+    tip: "El chorrito de limón al final despierta el sabor y enciende el morado.",
+    veredicto: "El tesoro morado de los Andes, servido bien frío.",
+    video: "8tRAKTwS0_s",
+  },
+];
+
 /* ---------------- Página Internacional ---------------- */
 
 export interface RecetaMundo {
