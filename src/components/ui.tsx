@@ -274,3 +274,35 @@ export function IconRedes({ className = "h-5 w-5", ...resto }: IconProps) {
     </svg>
   );
 }
+
+export function IconCompartir({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <path
+        d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.6 3.6c-.5.4-1.4 0-1.4-.8V6.5Z"
+        strokeLinejoin="round"
+      />
+      <path d="M8 9h8M8 12h5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCopiar({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <rect x="8.5" y="8.5" width="11" height="11" rx="2" />
+      <path d="M5.5 14.5A2 2 0 0 1 4.5 12V6.5a2 2 0 0 1 2-2H12a2 2 0 0 1 1.5.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconImprimir({ className = "h-5 w-5", ...resto }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} aria-hidden="true" {...resto}>
+      <path d="M7 8V4.5h10V8" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="4" y="8" width="16" height="8" rx="2" />
+      <rect x="7" y="13.5" width="10" height="6" rx="1" fill="#fffaef" />
+      <path d="M16.5 10.5h.01" strokeLinecap="round" strokeWidth="2.4" />
+    </svg>
+  );
+}

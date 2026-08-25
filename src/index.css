@@ -197,3 +197,32 @@ body {
     animation: none !important;
   }
 }
+
+/* ---------- Impresión de recetas ----------
+   Al imprimir, solo se muestra la receta abierta (la zona .print-area). */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+  /* Los videos no se imprimen; tampoco los botones de acción */
+  .print-area iframe,
+  .print-area .no-print {
+    display: none !important;
+  }
+  .print-area img {
+    max-height: 260px;
+    object-fit: cover;
+  }
+}
