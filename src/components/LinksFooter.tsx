@@ -2,10 +2,18 @@ import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ENLACES } from "../data";
 import { IconExterno, IconFlecha, IconOlla, Reveal } from "./ui";
+import ModalTerminos from "./Terminos";
 
-export default function LinksFooter({ onToast }: { onToast: (msg: string) => void }) {
+export default function LinksFooter({
+  onToast,
+  esAdmin,
+}: {
+  onToast: (msg: string) => void;
+  esAdmin: boolean;
+}) {
   const [correo, setCorreo] = useState("");
   const [error, setError] = useState("");
+  const [verTerminos, setVerTerminos] = useState(false);
   const navegar = useNavigate();
   const location = useLocation();
 

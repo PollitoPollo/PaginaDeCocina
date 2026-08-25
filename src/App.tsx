@@ -238,6 +238,7 @@ export default function App() {
         {modalAuth && (
           <ModalAuth
             modoInicial={modalAuth}
+            esAdmin={!!sesion?.esAdmin}
             onCerrar={() => setModalAuth(null)}
             onExito={manejarExito}
             onToast={avisar}

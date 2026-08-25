@@ -27,11 +27,14 @@ export default function ModalTerminos({
   onCerrar,
   esAdmin,
   avisar,
+  onAceptar,
 }: {
   abierto: boolean;
   onCerrar: () => void;
   esAdmin: boolean;
   avisar: (mensaje: string) => void;
+  /** Si existe, se muestra el botón verde "He leído y acepto" (se usa al registrarse). */
+  onAceptar?: () => void;
 }) {
   const [terminos, setTerminos] = useState(getTerminos);
   const [editando, setEditando] = useState(false);
@@ -92,13 +95,26 @@ export default function ModalTerminos({
                 ))}
               </div>
               <div className="mt-6 flex flex-wrap items-center gap-3 border-t-2 border-papel-2 pt-5">
-                <button
-                  type="button"
-                  onClick={onCerrar}
-                  className="inline-flex items-center gap-2 rounded-lg bg-uva px-6 py-3 font-bold text-crema transition-all duration-300 hover:-translate-y-0.5 hover:bg-uva-2"
-                >
-                  Entendido
-                </button>
+                {onAceptar ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onAceptar();
+                      onCerrar();
+                    }}
+                    className="inline-flex items-center gap-2 rounded-lg bg-verde px-6 py-3 font-bold text-crema shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-verde-2 hover:shadow-lg"
+                  >
+                    He leído y acepto
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onCerrar}
+                    className="inline-flex items-center gap-2 rounded-lg bg-uva px-6 py-3 font-bold text-crema transition-all duration-300 hover:-translate-y-0.5 hover:bg-uva-2"
+                  >
+                    Entendido
+                  </button>
+                )}
                 {esAdmin && (
                   <button
                     type="button"

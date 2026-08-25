@@ -17,6 +17,7 @@ import {
   IconUsuario,
   Modal,
 } from "./ui";
+import ModalTerminos from "./Terminos";
 
 export type ModoAuth = "login" | "registro" | "recordar";
 
@@ -219,11 +220,13 @@ export function ControlAuth({
 
 export function ModalAuth({
   modoInicial,
+  esAdmin,
   onCerrar,
   onExito,
   onToast,
 }: {
   modoInicial: ModoAuth;
+  esAdmin: boolean;
   onCerrar: () => void;
   onExito: (usuario: Usuario) => void;
   onToast: (mensaje: string) => void;
@@ -310,6 +313,7 @@ export function ModalAuth({
   const claseLabel = "block text-sm font-bold uppercase tracking-wider text-uva-2";
 
   return (
+    <>
     <Modal abierto onCerrar={onCerrar} etiqueta="Iniciar sesión o crear cuenta">
       <div className="relative">
         <button
@@ -410,6 +414,78 @@ export function ModalAuth({
               />
             </div>
 
+            {modo === "registro" && (
+              <>
+                <div>
+                  <label htmlFor="auth-clave2" className={claseLabel}>
+                    Confirmar contraseña
+                  </label>
+                  <input
+                    id="auth-clave2"
+                    type="password"
+                    value={clave2}
+                    onChange={(e) => setClave2(e.target.value)}
+                    placeholder="Vuelve a escribir la misma clave"
+                    className={claseInput}
+                  />
+                  {clave2.length > 0 && (
+                    <p
+                      className={`mt-1.5 text-sm font-bold ${
+                        clave === clave2 ? "text-verde" : "text-rojo"
+                      }`}
+                    >
+                      {clave === clave2
+                        ? "✓ Las contraseñas coinciden."
+                        : "Las contraseñas todavía no coinciden."}
+                    </p>
+                  )}
+                </div>
+
+                {/* Aceptar Términos y Condiciones */}
+                <div
+                  className={`rounded-lg border-2 p-4 transition-colors duration-300 ${
+                    aceptaTerminos ? "border-verde bg-verde/10" : "border-papel-2 bg-crema"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (aceptaTerminos) {
+                        setAceptaTerminos(false);
+                      } else {
+                        setVerTerminos(true);
+                      }
+                    }}
+                    aria-pressed={aceptaTerminos}
+                    className="flex w-full items-center gap-3.5 text-left"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border-2 transition-all duration-300 ${
+                        aceptaTerminos
+                          ? "border-verde bg-verde text-crema"
+                          : "border-uva-2/50 bg-crema"
+                      }`}
+                    >
+                      {aceptaTerminos && <IconCheck className="h-4 w-4" />}
+                    </span>
+                    <span className="font-bold leading-snug text-uva">
+                      Aceptar los{" "}
+                      <span className="text-rojo underline underline-offset-4">
+                        Términos y Condiciones
+                      </span>{" "}
+                      de Cocina Pulguita
+                    </span>
+                  </button>
+                  <p className="mt-2 pl-[2.65rem] text-[13px] font-bold leading-snug text-uva-2">
+                    {aceptaTerminos
+                      ? "Gracias por leerlos. Ya puedes crear tu cuenta."
+                      : "Tócalos para leerlos: aparecerá un recuadro con las reglas de esta mesa."}
+                  </p>
+                </div>
+              </>
+            )}
+
             {error && (
               <p
                 role="alert"
@@ -432,27 +508,26 @@ export function ModalAuth({
           </form>
 
           {modo === "login" && (
-            <>
-              <button
-                type="button"
-                onClick={() => cambiarModo("recordar")}
-                className="mt-4 w-full text-center text-sm font-bold text-uva-2 underline-offset-4 transition-colors hover:text-rojo hover:underline"
-              >
-                ¿Olvidaste tu contraseña? Restablécela aquí
-              </button>
-              <p className="mt-4 rounded-lg bg-papel-2 px-4 py-3 text-center text-[13px] font-bold leading-relaxed text-uva-2">
-                Cuentas de demostración:
-                <br />
-                Administrador: usuario <span className="text-rojo">admin</span> · clave{" "}
-                <span className="text-rojo">admin123</span>
-                <br />
-                Usuario casual: usuario <span className="text-verde-2">casual</span> · clave{" "}
-                <span className="text-verde-2">casual123</span>
-              </p>
-            </>
+            <button
+              type="button"
+              onClick={() => cambiarModo("recordar")}
+              className="mt-4 w-full text-center text-sm font-bold text-uva-2 underline-offset-4 transition-colors hover:text-rojo hover:underline"
+            >
+              ¿Olvidaste tu contraseña? Restablécela aquí
+            </button>
           )}
         </div>
       </div>
     </Modal>
+
+    {/* Recuadro de Términos y Condiciones, con los colores de la página */}
+    <ModalTerminos
+      abierto={verTerminos}
+      esAdmin={esAdmin}
+      avisar={onToast}
+      onCerrar={() => setVerTerminos(false)}
+      onAceptar={() => setAceptaTerminos(true)}
+    />
+    </>
   );
 }
