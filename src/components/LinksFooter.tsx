@@ -250,10 +250,24 @@ export default function LinksFooter({
           </div>
           <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-uva-2 pt-6 text-sm font-bold text-lila sm:flex-row sm:items-center">
             <p>© 2026 Cocina Pulguita — Hecho con ají amarillo, chicha morada y cariño.</p>
+            <button
+              type="button"
+              onClick={() => setVerTerminos(true)}
+              className="text-aji underline-offset-4 transition-colors duration-300 hover:text-aji-2 hover:underline"
+            >
+              Términos y Condiciones
+            </button>
             <p>Los videos pertenecen a sus creadores en YouTube.</p>
           </div>
         </div>
       </footer>
+
+      <ModalTerminos
+        abierto={verTerminos}
+        onCerrar={() => setVerTerminos(false)}
+        esAdmin={esAdmin}
+        avisar={onToast}
+      />
     </>
   );
 }

@@ -233,7 +233,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
-        <LinksFooter onToast={avisar} />
+        <LinksFooter onToast={avisar} esAdmin={!!sesion?.esAdmin} />
 
         {modalAuth && (
           <ModalAuth

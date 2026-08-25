@@ -3,8 +3,11 @@ import { VIDEO_POR_RECETA, type Receta } from "../data";
 import {
   IconCheck,
   IconCerrar,
+  IconCompartir,
+  IconCopiar,
   IconEstrella,
   IconExterno,
+  IconImprimir,
   IconLlama,
   IconMas,
   IconOlla,
@@ -39,16 +42,50 @@ export default function Recipes({
   onCalificar: (recetaId: string, estrellas: number) => void;
 }) {
   const [filtro, setFiltro] = useState<string>("Todas");
+  const [busqueda, setBusqueda] = useState("");
+  const [copiado, setCopiado] = useState(false);
   const [abierta, setAbierta] = useState<Receta | null>(null);
 
-  const visibles = useMemo(
-    () => (filtro === "Todas" ? recetas : recetas.filter((r) => r.categoria === filtro)),
-    [recetas, filtro]
-  );
+  const visibles = useMemo(() => {
+    const porCategoria =
+      filtro === "Todas" ? recetas : recetas.filter((r) => r.categoria === filtro);
+    const q = busqueda.trim().toLowerCase();
+    if (!q) return porCategoria;
+    return porCategoria.filter(
+      (r) =>
+        r.nombre.toLowerCase().includes(q) ||
+        r.descripcion.toLowerCase().includes(q) ||
+        r.region.toLowerCase().includes(q) ||
+        r.ingredientes.some((ing) => ing.toLowerCase().includes(q))
+    );
+  }, [recetas, filtro, busqueda]);
+
   const setAprendidas = useMemo(() => new Set(aprendidas), [aprendidas]);
   const esAprendida = abierta ? setAprendidas.has(abierta.id) : false;
   const videoId = abierta ? abierta.video ?? VIDEO_POR_RECETA[abierta.id] : undefined;
   const califActual = abierta ? calificaciones[abierta.id] ?? 0 : 0;
+
+  const limpiarBusqueda = () => {
+    setBusqueda("");
+    setFiltro("Todas");
+  };
+
+  const compartirWhatsApp = (receta: Receta) => {
+    const enlace = `${window.location.origin}${window.location.pathname}`;
+    const texto = `${receta.nombre} — receta peruana de Cocina Pulguita. ${receta.descripcion} Mira la receta completa, los ingredientes y el video tutorial aquí: ${enlace}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener");
+  };
+
+  const copiarEnlace = async () => {
+    const enlace = `${window.location.origin}${window.location.pathname}`;
+    try {
+      await navigator.clipboard.writeText(enlace);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    } catch {
+      window.prompt("Copia este enlace para compartirlo:", enlace);
+    }
+  };
 
   return (
     <section id="recetas" className="scroll-mt-24 bg-papel py-24">
@@ -82,24 +119,74 @@ export default function Recipes({
         </Reveal>
 
         <Reveal delay={140}>
-          <div className="mt-10 flex flex-wrap gap-3" role="group" aria-label="Filtrar recetas por categoría">
-            {CATEGORIAS.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setFiltro(cat)}
-                aria-pressed={filtro === cat}
-                className={`rounded-full border-2 px-5 py-2.5 font-bold transition-all duration-300 ${
-                  filtro === cat
-                    ? "border-uva bg-uva text-crema shadow-md"
-                    : "border-uva/25 bg-crema text-uva hover:-translate-y-0.5 hover:border-uva hover:shadow"
-                }`}
+          <div className="mt-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-wrap gap-3" role="group" aria-label="Filtrar recetas por categoría">
+              {CATEGORIAS.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setFiltro(cat)}
+                  aria-pressed={filtro === cat}
+                  className={`rounded-full border-2 px-5 py-2.5 font-bold transition-all duration-300 ${
+                    filtro === cat
+                      ? "border-uva bg-uva text-crema shadow-md"
+                      : "border-uva/25 bg-crema text-uva hover:-translate-y-0.5 hover:border-uva hover:shadow"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <label className="relative block w-full lg:w-80">
+              <span className="sr-only">Buscar receta por nombre o ingrediente</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+                className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-uva-2"
               >
-                {cat}
-              </button>
-            ))}
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <path d="m15.5 15.5 4.5 4.5" strokeLinecap="round" />
+              </svg>
+              <input
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Busca un plato o ingrediente…"
+                className="w-full rounded-full border-2 border-uva/25 bg-crema py-3 pl-12 pr-4 font-bold text-uva placeholder:text-uva-2/50 transition-colors duration-300 focus:border-rojo focus:outline-none"
+              />
+            </label>
           </div>
+          {busqueda.trim() && (
+            <p className="mt-4 text-sm font-bold text-uva-2">
+              {visibles.length === 0
+                ? "No encontramos ninguna receta con ese nombre."
+                : `${visibles.length} ${visibles.length === 1 ? "receta encontrada" : "recetas encontradas"} para "${busqueda.trim()}".`}
+            </p>
+          )}
         </Reveal>
+
+        {visibles.length === 0 && (
+          <Reveal delay={160}>
+            <div className="mt-10 rounded-xl border-l-8 border-rojo bg-crema p-8 text-center shadow-md">
+              <p className="font-display text-2xl font-black text-tinta">
+                Hmm, ese plato todavía no está en la despensa
+              </p>
+              <p className="mx-auto mt-2 max-w-xl leading-relaxed text-uva">
+                Prueba con otro nombre o ingrediente, o vuelve a ver todas las
+                recetas del recetario.
+              </p>
+              <button
+                type="button"
+                onClick={limpiarBusqueda}
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-uva px-6 py-3 font-bold text-crema transition-all duration-300 hover:-translate-y-0.5 hover:bg-rojo hover:shadow-lg"
+              >
+                Ver todas las recetas
+              </button>
+            </div>
+          </Reveal>
+        )}
 
         <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
           {visibles.map((receta, i) => {
@@ -200,7 +287,7 @@ export default function Recipes({
         etiqueta={abierta ? `Receta de ${abierta.nombre}` : "Receta"}
       >
         {abierta && (
-          <div>
+          <div className="print-area">
             <div className="relative">
               <img
                 src={abierta.imagen}
@@ -215,7 +302,7 @@ export default function Recipes({
                 type="button"
                 onClick={() => setAbierta(null)}
                 aria-label="Cerrar receta"
-                className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-tinta/60 text-crema transition-colors duration-300 hover:bg-rojo"
+                className="no-print absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-tinta/60 text-crema transition-colors duration-300 hover:bg-rojo"
               >
                 <IconCerrar className="h-5 w-5" />
               </button>
@@ -250,6 +337,35 @@ export default function Recipes({
                 <span className="inline-flex items-center gap-2 rounded-full bg-papel-2 px-4 py-1.5">
                   <IconPersonas className="h-4 w-4 text-rojo" /> {abierta.porciones} porciones
                 </span>
+              </div>
+
+              {/* Compartir e imprimir */}
+              <div className="no-print mt-6 flex flex-wrap items-center gap-3 rounded-xl border-2 border-dashed border-uva/25 bg-crema px-5 py-4">
+                <p className="mr-auto font-display text-base font-black text-tinta">
+                  Comparte esta receta
+                </p>
+                <button
+                  type="button"
+                  onClick={() => compartirWhatsApp(abierta)}
+                  className="inline-flex items-center gap-2 rounded-lg bg-verde px-4 py-2.5 text-sm font-bold text-crema transition-all duration-300 hover:-translate-y-0.5 hover:bg-verde-2 hover:shadow-md"
+                >
+                  <IconCompartir className="h-4 w-4" /> WhatsApp
+                </button>
+                <button
+                  type="button"
+                  onClick={copiarEnlace}
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-uva px-4 py-2 text-sm font-bold text-uva transition-all duration-300 hover:-translate-y-0.5 hover:bg-uva hover:text-crema"
+                >
+                  <IconCopiar className="h-4 w-4" />
+                  {copiado ? "¡Enlace copiado!" : "Copiar enlace"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-2 rounded-lg border-2 border-uva px-4 py-2 text-sm font-bold text-uva transition-all duration-300 hover:-translate-y-0.5 hover:bg-uva hover:text-crema"
+                >
+                  <IconImprimir className="h-4 w-4" /> Imprimir
+                </button>
               </div>
 
               <p className="mt-6 text-lg leading-relaxed text-uva">{abierta.descripcion}</p>
@@ -318,7 +434,7 @@ export default function Recipes({
               )}
 
               {/* Botón verde: Receta Aprendida */}
-              <div className="mt-11 border-t-2 border-tinta/10 pt-9 text-center">
+              <div className="no-print mt-11 border-t-2 border-tinta/10 pt-9 text-center">
                 <button
                   type="button"
                   onClick={() => onAlternarAprendida(abierta.id)}
