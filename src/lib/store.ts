@@ -34,23 +34,23 @@ function escribir(clave: string, valor: unknown) {
   }
 }
 
-/* ---------- Cuentas de demostración ----------
-   admin  / admin123  → puede agregar recetas, niveles, cocineros y consejos
-   casual / casual123 → usuario casual: solo puede ver y marcar recetas        */
+/* ---------- Cuentas de la casa ----------
+   jefe     / cocina2026 → administración: publica recetas, niveles, cocineros y términos
+   invitado / sabor2026  → usuario casual: solo ve, marca recetas y completa niveles   */
 export const CUENTAS_DEMO: Usuario[] = [
   {
     id: "admin",
-    correo: "admin@cocinapulguita.pe",
-    usuario: "admin",
-    pass: "admin123",
+    correo: "jefe@cocinapulguita.pe",
+    usuario: "jefe",
+    pass: "cocina2026",
     esAdmin: true,
     creadoEn: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "casual",
-    correo: "casual@cocinapulguita.pe",
-    usuario: "casual",
-    pass: "casual123",
+    correo: "invitado@cocinapulguita.pe",
+    usuario: "invitado",
+    pass: "sabor2026",
     esAdmin: false,
     creadoEn: "2026-01-01T00:00:00.000Z",
   },
@@ -142,7 +142,7 @@ export function recordarClave(
     return {
       ok: false,
       error:
-        "Las cuentas de demostración (admin y casual) no cambian de contraseña.",
+        "Las cuentas oficiales de la casa no cambian de contraseña por esta vía.",
     };
   }
   const usuarios = listaUsuarios();
@@ -516,4 +516,52 @@ export const REDES_SOCIALES = [
 
 export function abrirRedes() {
   REDES_SOCIALES.forEach((red) => window.open(red.url, "_blank", "noopener"));
+}
+
+/* ---------- Términos y Condiciones ---------- */
+
+export interface Terminos {
+  texto: string;
+  actualizado: string;
+}
+
+const TERMINOS_DEF: Terminos = {
+  texto: `1. Sobre Cocina Pulguita
+Cocina Pulguita es una página educativa y sin fines de lucro, creada para compartir recetas, videos y consejos de cocina peruana e internacional, pensada para personas de todas las edades: desde jóvenes que empiezan hasta abuelos con toda una vida de sazón.
+
+2. Cuentas de usuario
+Para marcar recetas como aprendidas, completar niveles de cocina básica y calificar platos necesitas una cuenta. Tu contraseña es personal y no debes compartirla con nadie. Las cuentas de administración son de uso exclusivo del equipo de la página.
+
+3. Recetas y contenido
+Las recetas, consejos y guías se publican con la mejor intención, pero cada cocina y cada cuerpo son distintos. Revisa siempre los ingredientes si tienes alergias o condiciones de salud, y si eres menor de edad, cocina con la supervisión de un adulto.
+
+4. Videos y enlaces externos
+Los videos pertenecen a sus creadores en YouTube y los enlaces recomendados abren páginas de terceros. Cocina Pulguita no se hace responsable por el contenido de esos sitios.
+
+5. Donaciones
+Los aportes en la sección de Donaciones son totalmente voluntarios y se destinan a mantener la página viva: más recetas probadas, más videos y más escuela gratuita para todos.
+
+6. Convivencia
+Esta es una mesa para todos y todas: se pide respeto en todo momento. El equipo de administración puede editar los contenidos de la página para mantenerla actualizada y mejorarla.
+
+7. Cambios en estos términos
+Estos términos pueden actualizarse cuando sea necesario. La fecha de la última actualización siempre aparecerá en la parte superior de este documento.`,
+  actualizado: "1 de enero de 2026",
+};
+
+const K_TERMINOS = "cp_terminos";
+
+export function getTerminos(): Terminos {
+  const t = leer<Partial<Terminos> | null>(K_TERMINOS, null);
+  return t && t.texto ? { ...TERMINOS_DEF, ...t } : TERMINOS_DEF;
+}
+
+/** Actualiza los términos (solo lo usa la cuenta de administrador). */
+export function guardarTerminos(texto: string) {
+  const fecha = new Date().toLocaleDateString("es-PE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  escribir(K_TERMINOS, { texto: texto.trim(), actualizado: fecha });
 }

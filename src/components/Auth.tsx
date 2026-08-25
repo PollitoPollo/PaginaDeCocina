@@ -232,6 +232,9 @@ export function ModalAuth({
   const [usuario, setUsuario] = useState("");
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
+  const [clave2, setClave2] = useState("");
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [verTerminos, setVerTerminos] = useState(false);
   const [error, setError] = useState("");
 
   const cambiarModo = (m: ModoAuth) => {
@@ -254,6 +257,14 @@ export function ModalAuth({
       }
       if (clave.length < 4) {
         setError("La contraseña debe tener al menos 4 caracteres.");
+        return;
+      }
+      if (clave !== clave2) {
+        setError("Las contraseñas no coinciden. Vuelve a escribirlas con calma.");
+        return;
+      }
+      if (!aceptaTerminos) {
+        setError("Para crear tu cuenta necesitas aceptar los Términos y Condiciones.");
         return;
       }
       const r = registrar(correo, usuario, clave);
